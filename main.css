@@ -46,10 +46,31 @@ th {
 tbody th {
     text-align: center;
     width: 100%;
-    padding: 2% 0 0 0; 
     vertical-align:bottom;
     text-align: center;
     background-color: orange;
 }
+/* Style pour la ligne qui suit la souris */
+#mouse-line {
+    position: absolute;
+    height: 1px;
+    background-color: blue;
+    width: 80%;
+    pointer-events: none; /* Empêche d'interagir avec la ligne */
+    display: none; /* Caché par défaut */
+}
+#mouse-time {
+    position: absolute;
+    color: blue;
+    font-size: 14px;
+    z-index: 1000;
+    background-color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    pointer-events: none; /* Empêche les interactions avec cet élément */
+    display: none; /* Caché par défaut */
+}
+
+
 
 
