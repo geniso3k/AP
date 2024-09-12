@@ -27,6 +27,8 @@ table.calendar {
 thead th {
     border: 1px solid #ddd;
     padding: 10px;
+    height: 40px;
+    text-align: center;
 }
 
 tbody td {
@@ -35,10 +37,19 @@ tbody td {
     height: 40px;
     text-align: center;
 }
-tbody th{
-    background-color: blue;
-    height: 50%;
+
+th {
+    border: 1px solid #ddd;
+    height: auto;
 }
 
+tbody th {
+    text-align: center;
+    width: 100%;
+    padding: 2% 0 0 0; 
+    vertical-align:bottom;
+    text-align: center;
+    background-color: orange;
+}
 
 
