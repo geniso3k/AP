@@ -1,56 +1,61 @@
 let isMouseDown = false; // Variable pour savoir si la souris est appuyée
 
+// Attacher un événement `mouseup` global pour gérer le relâchement de la souris
+document.addEventListener("mouseup", function() {
+    isMouseDown = false;
+    //resetColors();
+});
+
 // Fonction appelée lorsqu'on clique sur une cellule
-function cliquer(id) {
-    let div = document.getElementById(id);
-    let sep = div.id.split('_');
-    let col = sep[0];
-    let lig = sep[1];
+function init() {
+    // Attacher les événements à chaque cellule une seule fois
+    document.querySelectorAll('td').forEach(function(cell) {
+        
+        // Quand on appuie sur la cellule avec la souris
+        cell.addEventListener("mousedown", function(event) {
+            isMouseDown = true;
+            cell.style.backgroundColor = "yellow"; // Colorer la cellule cliquée
 
-    div.addEventListener("mousedown", function(){
-        isMouseDown = true;
-        div.style.backgroundColor = "yellow";
-    })
-    document.addEventListener("mouseup", function(){
-        isMouseDown = false;
-        resetColors();
-    })
+        });
 
-    document.querySelectorAll('td').forEach(function(cell){
-        cell.addEventListener("mouseenter", function(){
-            if(isMouseDown){
-                cell.style.backgroundColor = "yellow";
+        // Quand on survole d'autres cellules avec la souris enfoncée
+        cell.addEventListener("mouseenter", function() {
+            if (isMouseDown) {
+                cell.style.backgroundColor = "yellow"; // Colorer la cellule survolée si la souris est enfoncée
             }
-        })
-    })
-    element.addEventListener("mouseleave", function(){
+        });
 
-        if(splitter(element, col) == '1' ){
-            
+        // Quand on quitte une cellule
+        cell.addEventListener("mouseleave", function() {
+            let col = splitter(cell, "col");
+            if (col === '1') {
+                console.log("Sortie d'une cellule dans la première colonne");
+            }
+        });
+    });
+
+    // Écouteur de clic global
+    document.addEventListener('mousedown', function(event) {
+        if(!isMouseDown){
+            // Si le clic est fait en dehors des cellules <td>, on réinitialise les couleurs
+            if (event.target.tagName.toLowerCase() !== 'td') {
+                resetColors();
+            }
         }
-
-    })
+    });
 }
 
-function splitter(a, choix){
+// Fonction pour séparer l'ID de la cellule en ligne et colonne
+function splitter(a, choix) {
+    let split = a.id.split('_');
+    let lig = split[1];
+    let col = split[0];
 
-    split = a.id.split('_');
-    lig = split[1];
-    col = split[0];
-
-    if(choix == "col"){
+    if (choix == "col") {
         return col;
-    }else{
+    } else {
         return lig;
     }
-
-
-}
-// Fonction pour colorer toute une ligne
-function colorRow(row, color) {
-    document.querySelectorAll(`td[data-row="${row}"]`).forEach(function(cell) {
-        cell.style.backgroundColor = color; // Appliquer la couleur à chaque cellule de la ligne
-    });
 }
 
 // Fonction pour remettre toutes les cellules à la couleur blanche
@@ -58,4 +63,9 @@ function resetColors() {
     document.querySelectorAll('td').forEach(function(cell) {
         cell.style.backgroundColor = "white"; // Remettre la couleur blanche à toutes les cellules
     });
+}
+
+// Initialiser les événements une seule fois lorsque le DOM est prêt
+window.onload = function() {
+    init(); // Attacher les événements à toutes les cellules
 }

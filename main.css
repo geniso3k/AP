@@ -35,6 +35,10 @@ tbody td {
     height: 40px;
     text-align: center;
 }
+tbody th{
+    background-color: blue;
+    height: 50%;
+}
 
 
 
