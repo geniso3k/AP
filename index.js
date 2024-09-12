@@ -3,43 +3,54 @@ let isMouseDown = false; // Variable pour savoir si la souris est appuyée
 // Fonction appelée lorsqu'on clique sur une cellule
 function cliquer(id) {
     let div = document.getElementById(id);
-    let separ = div.id.split('_'); // Diviser l'ID pour obtenir le numéro de ligne et de colonne
+    let sep = div.id.split('_');
+    let col = sep[0];
+    let lig = sep[1];
 
-    // Quand on clique, on passe isMouseDown à true
-    div.addEventListener("mousedown", function() {
+    div.addEventListener("mousedown", function(){
         isMouseDown = true;
+        div.style.backgroundColor = "yellow";
+    })
+    document.addEventListener("mouseup", function(){
+        isMouseDown = false;
+        resetColors();
+    })
 
-        // Vérifier si on est dans la première colonne (comparaison correcte)
-        if (separ[1] === '1') { // '1' comme chaîne de caractères
-            colorColumn(separ[1], "yellow"); // Corriger en utilisant la colonne, pas la ligne
+    document.querySelectorAll('td').forEach(function(cell){
+        cell.addEventListener("mouseenter", function(){
+            if(isMouseDown){
+                cell.style.backgroundColor = "yellow";
+            }
+        })
+    })
+    element.addEventListener("mouseleave", function(){
+
+        if(splitter(element, col) == '1' ){
+            
         }
 
-        // Lorsque la souris est relâchée, on remet toutes les cellules en blanc
-        document.addEventListener("mouseup", function() {
-            isMouseDown = false;
-            resetColors(); // Remettre les couleurs à blanc
-        }, { once: true });
-    });
-
-    // Lorsqu'on entre dans une autre cellule avec la souris appuyée
-    document.querySelectorAll('td').forEach(function(cell) {
-        cell.addEventListener("mouseenter", function() {
-            if (isMouseDown) {
-                this.style.backgroundColor = "yellow"; // Correction de la syntaxe
-            }
-        });
-    });
+    })
 }
 
-// Fonction pour colorer toutes les cellules d'une colonne donnée
-function colorColumn(col, color) {
-    for (let i = 1; i <= 4; i++) { // Supposons qu'il y ait 4 lignes dans le tableau
-        let cellId = i + '_' + col;
-        let cell = document.getElementById(cellId);
-        if (cell) {
-            cell.style.backgroundColor = color; // Appliquer la couleur à la cellule
-        }
+function splitter(a, choix){
+
+    split = a.id.split('_');
+    lig = split[1];
+    col = split[0];
+
+    if(choix == "col"){
+        return col;
+    }else{
+        return lig;
     }
+
+
+}
+// Fonction pour colorer toute une ligne
+function colorRow(row, color) {
+    document.querySelectorAll(`td[data-row="${row}"]`).forEach(function(cell) {
+        cell.style.backgroundColor = color; // Appliquer la couleur à chaque cellule de la ligne
+    });
 }
 
 // Fonction pour remettre toutes les cellules à la couleur blanche
