@@ -66,20 +66,23 @@ function resetColors() {
         cell.style.backgroundColor = "white"; // Remettre la couleur blanche à toutes les cellules
     });
 }
+
 // Fonction pour calculer l'heure exacte en fonction de la position de la souris, en ignorant la ligne des jours
 function calculateExactTimeFromPosition(mouseY, tableTop) {
     const startHour = 0; // Heure de début dans ton tableau (00:00)
     const totalHours = 24; // Total d'heures affichées dans le tableau (00:00 - 23:00)
 
     const tableBody = document.querySelector('.calendar tbody');
-    const tableRows = tableBody.querySelectorAll('tr');
-    const firstRow = tableRows[0]; // La première ligne du tableau contient les jours
+    const firstRowHeight = tableBody.querySelectorAll('tr')[0].offsetHeight; // Hauteur de la première ligne (jours)
 
-    const rowHeight = firstRow.offsetHeight; // Hauteur d'une ligne horaire (ligne normale)
-    const relativeY = mouseY - tableTop - firstRow.offsetHeight; // Soustraire la hauteur de la première ligne
+    // Calcul de la position relative à partir de la fin de la ligne des jours
+    const relativeY = mouseY - tableTop - firstRowHeight;
 
-    // Si la souris est au-dessus de la première heure, ne rien afficher
+    // Si la souris est au-dessus de la première heure (ligne des jours), ne rien afficher
     if (relativeY < 0) return null;
+
+    // Obtenir la hauteur de chaque ligne dans le tableau
+    const rowHeight = (tableBody.offsetHeight - firstRowHeight) / totalHours; // Hauteur d'une ligne horaire (heures)
 
     const hoursOffset = Math.floor(relativeY / rowHeight); // Trouve l'heure correspondante
     const minutesOffset = Math.floor(((relativeY % rowHeight) / rowHeight) * 60); // Minutes à l'intérieur de l'heure
@@ -103,19 +106,19 @@ function initMouseTracking() {
         const rect = calendar.getBoundingClientRect();
         const mouseY = event.clientY - rect.top;
 
-        // Ajuster la ligne pour la placer juste au niveau de la souris
-        const adjustedY = mouseY - (lineHeight / 2); // Ajustement pour centrer le trait sur la souris
-        mouseLine.style.top = adjustedY + 'px';
-        mouseLine.style.display = 'block'; // Afficher la ligne
-
         // Calculer et afficher l'heure exacte correspondante à gauche
         const time = calculateExactTimeFromPosition(event.clientY, rect.top);
+        
         if (time !== null) {
+            const adjustedY = mouseY - (lineHeight / 2); // Ajustement pour centrer le trait sur la souris
+            mouseLine.style.top = adjustedY + 'px';
+            mouseLine.style.display = 'block'; // Afficher la ligne
             mouseTime.innerText = time;
             mouseTime.style.top = adjustedY + 'px';
             mouseTime.style.display = 'block'; // Afficher l'heure
         } else {
-            mouseTime.style.display = 'none'; // Masquer l'heure si hors limites
+            mouseLine.style.display = 'none'; // Masquer la ligne quand hors limites
+            mouseTime.style.display = 'none'; // Masquer l'heure quand hors limites
         }
     });
 
@@ -124,7 +127,19 @@ function initMouseTracking() {
         mouseLine.style.display = 'none'; // Masquer la ligne quand la souris quitte la zone
         mouseTime.style.display = 'none'; // Masquer l'heure
     });
+
+    // Réagir au redimensionnement de l'écran pour recalculer les positions
+    window.addEventListener('resize', function() {
+        // Ne recalculer les positions que lorsque la souris bouge ou quand l'écran est redimensionné
+        const rect = calendar.getBoundingClientRect();
+        const mouseY = event.clientY - rect.top;
+
+        const adjustedY = mouseY - (lineHeight / 2); // Ajuster à nouveau la position de la ligne
+        mouseLine.style.top = adjustedY + 'px';
+        mouseTime.style.top = adjustedY + 'px';
+    });
 }
+
 // Initialiser les événements une seule fois lorsque le DOM est prêt
 window.onload = function() {
     init(); // Attacher les événements à toutes les cellules
