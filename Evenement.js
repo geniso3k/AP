@@ -1,16 +1,31 @@
 class Evenement{
+    #id ;
+    #libelle;
+    #dateHeureDebut;
+    #dateHeureFin;
+    #couleur;
+
+
     constructor(id, libelle, dateHeureDebut, dateHeureFin, couleur){
-        this.id = id;
-        this.libelle = libelle;
-        this.dateHeureDebut = dateHeureDebut;
-        this.dateHeureFin = dateHeureFin;
-        this.couleur = couleur;
+        this.#id = id;
+        this.#libelle = libelle;
+        this.#dateHeureDebut = dateHeureDebut;
+        this.#dateHeureFin = dateHeureFin;
+        this.#couleur = couleur;
+        this.maListe = [];
+    }
+
+    ajouterElement(Creneau){
+        this.maListe.push(Creneau);
     }
 
     get id(){
         return this.id;
     }
 
+    afficherListe(){
+        console.log(this.maListe);
+    }
     creerObjetHtml(){
 
     }
