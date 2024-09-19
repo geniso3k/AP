@@ -4,7 +4,7 @@ let dayColumns = document.getElementsByClassName("day-column");
 // Ajoute un écouteur d'événements pour chaque colonne de jour
 Array.from(dayColumns).forEach(column => {
     column.addEventListener("click", (e) => {
-        column.innerHTML = "Ici";
+        column.innerHTML = "<div class='event-slot'>esffs</div>";
     });
 });
 
