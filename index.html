@@ -11,9 +11,9 @@
     <div class="planning-container">
         <!-- Barre de navigation pour changer de semaine -->
         <div class="navigation">
-            <button title="Semaine précédente" class="nav-button" id="prev-week">&lt;</button>
-            <span class="current-week">Semaine du 18 au 24 septembre 2024</span>
-            <button title="Semaine suivante" class="nav-button" id="next-week" onclick="afficheCalendrier()">&gt;</button>
+            <button title="Semaine précédente" class="nav-button" id="prev-week" onclick="reculeSemaine()">&lt;</button>
+            <span id="current-week" class="current-week"></span>
+            <button title="Semaine suivante" class="nav-button" id="next-week" onclick="avanceSemaine('+')">&gt;</button>
         </div>
         
         <!-- Conteneur du planning -->
