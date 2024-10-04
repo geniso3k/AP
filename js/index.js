@@ -4,9 +4,48 @@ let dayColumns = document.getElementsByClassName("day-column");
 // Ajoute un écouteur d'événements pour chaque colonne de jour
 Array.from(dayColumns).forEach(column => {
     column.addEventListener("click", function(event){
-        column.innerHTML = "<div class='event-slot'>esffs</div>";
+        let mouseX = event.clientX;
+        let mouseY = event.clientY;
+        creationDiv(column, mouseX,mouseY);
     });
 });
+let allEvents = document.getElementsByClassName("event-slot");
+
+Array.from(allEvents).forEach(slots =>{
+    column.addEventListener("onmousedown", function(down){
+
+        down.addEventListener("onmousemove", function(pos){
+
+            let div = down.closest("event-slot");
+            div.style.width = pos.clientY;
+            console.log("En place");
+
+
+        });
+
+    });
+});
+
+function creationDiv(column, X, Y){
+
+    let div = document.createElement("div");
+    div.innerHTML = "Je suis là";
+    div.classList.add("event-slot");
+    
+    const rect = column.getBoundingClientRect();
+    console.log(rect.left+" /"+rect.top);
+
+    // Positionne le div en utilisant les coordonnées de la souris
+    div.style.width = "100%";
+    div.style.position = "absolute"; // Positionne le div en mode absolu
+    div.style.top = `${Y - rect.top}px`; // Ajuste par rapport à la colonne
+    div.style.marginRight = `${X - rect.right}px`;
+
+
+    // Ajoute le nouvel élément div au parent de la colonne
+    column.appendChild(div);
+
+}
 
 
 //Gerer les dates de l'entete du planning
