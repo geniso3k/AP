@@ -7,15 +7,12 @@ body {
 }
 
 .planning-container {
-    width: 100%; /* Rend la largeur du conteneur flexible */
-    max-width: 100%; /* Empêche le conteneur de dépasser la largeur de l'écran */
+    width: 100%;
+    max-width: 100%;
     margin: 20px auto;
-
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
-
-
 }
 
 .navigation {
@@ -47,14 +44,15 @@ body {
 .planning {
     display: flex;
     flex-direction: column;
-    overflow-x: auto; /* Défilement horizontal ajouté */
-    overflow-y: auto;
+    overflow-x: auto;
+    overflow-y: hidden; /* Empêche un défilement vertical inutile */
 }
 
 .planning-header,
 .planning-body {
     display: grid;
-    grid-template-columns: 60px repeat(7, 1fr); /* Garde la cohérence entre l'entête et le corps */
+    grid-template-columns: 60px repeat(7, 1fr); /* Les colonnes sont définies de la même manière pour header et body */
+    min-width: 800px; /* Permet de garder une largeur minimale afin d'éviter les décalages */
 }
 
 .planning-header {
@@ -77,7 +75,6 @@ body {
 /* Corps du planning */
 .planning-body {
     height: 600px;
-
 }
 
 .time-column {
