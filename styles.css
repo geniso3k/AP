@@ -7,11 +7,11 @@ body {
 }
 
 .planning-container {
-    width: 90%;
+    width: 100%;
+    max-width: 100%;
     margin: 20px auto;
     border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden;
     background-color: #fff;
 }
 
@@ -43,12 +43,20 @@ body {
 /* Styles du planning */
 .planning {
     display: flex;
+    height: 200px;
     flex-direction: column;
+    overflow-x: auto;
+    overflow-y: auto; /* Empêche un défilement vertical inutile */
+}
+
+.planning-header,
+.planning-body {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr); /* Les colonnes sont définies de la même manière pour header et body */
+    min-width: 800px; /* Permet de garder une largeur minimale afin d'éviter les décalages */
 }
 
 .planning-header {
-    display: grid;
-    grid-template-columns: 60px repeat(7, 1fr);
     background-color: #f0f0f0;
     border-bottom: 1px solid #ddd;
 }
@@ -67,11 +75,7 @@ body {
 
 /* Corps du planning */
 .planning-body {
-    display: grid;
-    grid-template-columns: 60px repeat(7, 1fr);
     height: 600px;
-    overflow-y: auto;
-    position: relative;
 }
 
 .time-column {
@@ -110,7 +114,3 @@ body {
 .event-slot:hover {
     background-color: #218838;
 }
-
-
-
-
