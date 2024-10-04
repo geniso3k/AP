@@ -31,6 +31,10 @@ function creationDiv(column, X, Y){
     let div = document.createElement("div");
     div.innerHTML = "Je suis là";
     div.classList.add("event-slot");
+
+    let sousDiv = document.createElement("div");
+    sousDiv.innerHtml = "En dessous";
+    sousDiv.classList.add("sousDiv");
     
     const rect = column.getBoundingClientRect();
     console.log(rect.left+" /"+rect.top);
@@ -44,6 +48,7 @@ function creationDiv(column, X, Y){
 
     // Ajoute le nouvel élément div au parent de la colonne
     column.appendChild(div);
+    div.appendChild(sousDiv);
 
 }
 
