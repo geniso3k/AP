@@ -7,12 +7,15 @@ body {
 }
 
 .planning-container {
-    width: 90%;
+    width: 100%; /* Rend la largeur du conteneur flexible */
+    max-width: 100%; /* Empêche le conteneur de dépasser la largeur de l'écran */
     margin: 20px auto;
+
     border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden;
     background-color: #fff;
+
+
 }
 
 .navigation {
@@ -44,11 +47,17 @@ body {
 .planning {
     display: flex;
     flex-direction: column;
+    overflow-x: auto; /* Défilement horizontal ajouté */
+    overflow-y: auto;
+}
+
+.planning-header,
+.planning-body {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr); /* Garde la cohérence entre l'entête et le corps */
 }
 
 .planning-header {
-    display: grid;
-    grid-template-columns: 60px repeat(7, 1fr);
     background-color: #f0f0f0;
     border-bottom: 1px solid #ddd;
 }
@@ -67,11 +76,8 @@ body {
 
 /* Corps du planning */
 .planning-body {
-    display: grid;
-    grid-template-columns: 60px repeat(7, 1fr);
     height: 600px;
-    overflow-y: auto;
-    position: relative;
+
 }
 
 .time-column {
@@ -110,7 +116,3 @@ body {
 .event-slot:hover {
     background-color: #218838;
 }
-
-
-
-
