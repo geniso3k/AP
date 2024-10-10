@@ -30,7 +30,8 @@ function creationDiv(column, X, Y){
     div.style.width = "100%";
     div.style.position = "absolute"; // Positionne le div en mode absolu
     div.style.top = `${Y - rect.top}px`; // Ajuste par rapport à la colonne
-    div.style.left = `${X - rect.left}px`;
+
+ 
 
 
     // Ajoute le nouvel élément div au parent de la colonne
@@ -43,14 +44,37 @@ function creationDiv(column, X, Y){
     div.addEventListener("mousedown", function(down){
 
         let initialY = down.clientY;
+        let initialTop = div.offsetTop; // Position initiale du div
         let initialHeight = div.offsetHeight;
+        down.stopPropagation() ;
+
+        isResizing = false;
 
         function onMouseMove(position){
 
             isResizing = true;
 
-            let newHeight = initialHeight + (position.clientY - initialY);
-            div.style.height = newHeight + "px";
+            let currentY = position.clientY;
+
+
+            if((initialHeight + (currentY - initialY)) > initialHeight){
+
+                let newHeight = initialHeight + (currentY - initialY);
+                div.style.height = newHeight + "px";
+                console.log("redimension vers le bas");
+                console.log("InitialHeight : "+initialHeight+" currentY : "+currentY+" InitialY :" +initialY+ " InitialTop: "+initialTop+" Calcul : "+(initialHeight+ (currentY-initialY)) );
+
+            }else{
+
+                console.log("redimension vers le haut");
+
+                
+                let newTop = initialTop - (initialHeight + (initialY - currentY) - initialHeight);
+                div.style.top = newTop + "px";
+                div.style.height = initialY-currentY+"px";
+                console.log("Height : " + div.offsetHeight +" InitialHeight : "+initialHeight+" currentY : "+currentY+" InitialY :" +initialY+ " InitialTop: "+initialTop+" Calcul : "+(initialHeight+ (currentY-initialY)) );
+
+            }
 
             console.log("En place"); // Le log devrait maintenant fonctionner correctement
         }
@@ -58,6 +82,7 @@ function creationDiv(column, X, Y){
         function onMouseUp() {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
+            
         }
 
         // Ajoute les écouteurs d'événements
