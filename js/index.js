@@ -4,6 +4,8 @@ let dayColumns = document.getElementsByClassName("day-column");
 // Ajoute un écouteur d'événements pour chaque colonne de jour
 Array.from(dayColumns).forEach(column => {
     column.addEventListener("click", function(event){
+        if (event.defaultPrevented) return;
+
         let mouseX = event.clientX;
         let mouseY = event.clientY;
         creationDiv(column, mouseX,mouseY);
@@ -11,20 +13,6 @@ Array.from(dayColumns).forEach(column => {
 });
 let allEvents = document.getElementsByClassName("event-slot");
 
-Array.from(allEvents).forEach(slots =>{
-    column.addEventListener("onmousedown", function(down){
-
-        down.addEventListener("onmousemove", function(pos){
-
-            let div = down.closest("event-slot");
-            div.style.width = pos.clientY;
-            console.log("En place");
-
-
-        });
-
-    });
-});
 
 function creationDiv(column, X, Y){
 
@@ -33,22 +21,57 @@ function creationDiv(column, X, Y){
     div.classList.add("event-slot");
 
     let sousDiv = document.createElement("div");
-    sousDiv.innerHtml = "En dessous";
+    sousDiv.innerHTML = "Dans la div";
     sousDiv.classList.add("sousDiv");
     
     const rect = column.getBoundingClientRect();
-    console.log(rect.left+" /"+rect.top);
 
     // Positionne le div en utilisant les coordonnées de la souris
     div.style.width = "100%";
     div.style.position = "absolute"; // Positionne le div en mode absolu
     div.style.top = `${Y - rect.top}px`; // Ajuste par rapport à la colonne
-    div.style.marginRight = `${X - rect.right}px`;
+    div.style.left = `${X - rect.left}px`;
 
 
     // Ajoute le nouvel élément div au parent de la colonne
     column.appendChild(div);
     div.appendChild(sousDiv);
+
+
+    let isResizing = false; //
+
+    div.addEventListener("mousedown", function(down){
+
+        let initialY = down.clientY;
+        let initialHeight = div.offsetHeight;
+
+        function onMouseMove(position){
+
+            isResizing = true;
+
+            let newHeight = initialHeight + (position.clientY - initialY);
+            div.style.height = newHeight + "px";
+
+            console.log("En place"); // Le log devrait maintenant fonctionner correctement
+        }
+        // On stoppe le redimensionnement quand la souris est relâchée
+        function onMouseUp() {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+        }
+
+        // Ajoute les écouteurs d'événements
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+
+    });
+
+    div.addEventListener("click", function(event) {
+        if (isResizing) {
+            event.preventDefault(); // Annule l'événement click si redimensionnement
+            isResizing = false; // Réinitialise la variable après relâchement de la souris
+        }
+    });
 
 }
 
