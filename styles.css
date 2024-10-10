@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+
 }
 
 .planning-container {
@@ -19,12 +19,12 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #022347;
     color: #fff;
 }
 
 .nav-button {
-    background-color: #0056b3;
+    background-color: #494799;
     border: none;
     color: #fff;
     padding: 8px;
@@ -43,7 +43,7 @@ body {
 /* Styles du planning */
 .planning {
     display: flex;
-    height: 200px;
+    height: 400px;
     flex-direction: column;
     overflow-x: auto;
     overflow-y: auto; /* Empêche un défilement vertical inutile */
