@@ -27,6 +27,9 @@ function creationDiv(column, X, Y){
     const rect = column.getBoundingClientRect();
 
     // Positionne le div en utilisant les coordonnées de la souris
+    let rndm = Math.floor(Math.random() * 999999) + 100000;
+    console.log(rndm);
+    div.style.backgroundColor = "#"+rndm;
     div.style.width = "100%";
     div.style.position = "absolute"; // Positionne le div en mode absolu
     div.style.top = `${Y - rect.top}px`; // Ajuste par rapport à la colonne
@@ -40,6 +43,16 @@ function creationDiv(column, X, Y){
 
 
     let isResizing = false; //
+
+    div.addEventListener("contextmenu", function(event){
+
+        div.remove();
+        event.preventDefault();
+        return false;
+
+    });
+
+
 
     div.addEventListener("mousedown", function(down){
 
@@ -70,8 +83,11 @@ function creationDiv(column, X, Y){
 
                 
                 let newTop = initialTop - (initialHeight + (initialY - currentY) - initialHeight);
+                if(newTop < 0) newTop = 0;
+                if(currentY < 129) currentY = 129;
                 div.style.top = newTop + "px";
-                div.style.height = initialY-currentY+"px";
+                div.style.height = initialY-currentY+35+"px";
+                div.style.minHeight = "35px";
                 console.log("Height : " + div.offsetHeight +" InitialHeight : "+initialHeight+" currentY : "+currentY+" InitialY :" +initialY+ " InitialTop: "+initialTop+" Calcul : "+(initialHeight+ (currentY-initialY)) );
 
             }
