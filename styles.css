@@ -43,7 +43,7 @@ body {
 /* Styles du planning */
 .planning {
     display: flex;
-    height: 400px;
+    height: 4000px;
     flex-direction: column;
     overflow-x: auto;
     overflow-y: auto; /* Empêche un défilement vertical inutile */
