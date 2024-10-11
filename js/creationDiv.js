@@ -33,6 +33,7 @@ function creationDiv(column, X, Y){
     div.style.width = "100%";
     div.style.position = "absolute"; // Positionne le div en mode absolu
     div.style.top = `${Y - rect.top}px`; // Ajuste par rapport à la colonne
+    div.style.minHeight = "35px";
 
  
 
@@ -70,15 +71,9 @@ function creationDiv(column, X, Y){
             let currentY = position.clientY;
 
 
-            if((initialHeight + (currentY - initialY)) > initialHeight){
+            if(!((initialHeight + (currentY - initialY)) > initialHeight)){
 
-                let newHeight = initialHeight + (currentY - initialY);
-                div.style.height = newHeight + "px";
-                console.log("redimension vers le bas");
-                console.log("InitialHeight : "+initialHeight+" currentY : "+currentY+" InitialY :" +initialY+ " InitialTop: "+initialTop+" Calcul : "+(initialHeight+ (currentY-initialY)) );
-
-            }else{
-
+               
                 console.log("redimension vers le haut");
 
                 
@@ -87,12 +82,28 @@ function creationDiv(column, X, Y){
                 if(currentY < 129) currentY = 129;
                 div.style.top = newTop + "px";
                 div.style.height = initialY-currentY+35+"px";
-                div.style.minHeight = "35px";
+                
+                let newHeight = initialHeight - (currentY - initialY);
+                div.style.height = newHeight + "px";
+
                 console.log("Height : " + div.offsetHeight +" InitialHeight : "+initialHeight+" currentY : "+currentY+" InitialY :" +initialY+ " InitialTop: "+initialTop+" Calcul : "+(initialHeight+ (currentY-initialY)) );
+
+            }else{
+
+
+                console.log("Redimension vers le bas");
+                let newHeight = initialHeight + (currentY - initialY);
+                div.style.height = newHeight + "px";
+                
+                console.log("InitialHeight : "+initialHeight+" currentY : "+currentY+" InitialY :" +initialY+ " InitialTop: "+initialTop+" Calcul : "+(initialHeight+ (currentY-initialY)) );
+                
+
+
+
 
             }
 
-            console.log("En place"); // Le log devrait maintenant fonctionner correctement
+
         }
         // On stoppe le redimensionnement quand la souris est relâchée
         function onMouseUp() {
@@ -117,47 +128,3 @@ function creationDiv(column, X, Y){
 }
 
 
-//Gerer les dates de l'entete du planning
-let lundiCourant = new Date();
-lundiCourant.setDate( lundiCourant.getDate() - lundiCourant.getDay() ) ;
-let retourneJour = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-let retourneMois = ["janvier","fevrier","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","decembre"];
-function afficheCalendrier( date ) //Pour ajouter la date à coté de jeudi vendredi etc
-{   
-    let d = new Date( date ) ;
-    let lesDates = document.getElementsByClassName("day-header");
-    let cWeek = document.getElementById("current-week");
-    let premier; let dernier;
-    for(let uneDate of lesDates){
-        day = retourneJour[d.getDay()];
-        if(d.getDay() == 0){
-            premier = d.getDate() ;
-        }
-        if(d.getDay() == 6){
-            dernier = d.getDate();
-        }
-        uneDate.innerHTML = "<b>" + day + " "+ d.getDate() + "</b>" ;
-        d.setDate( d.getDate() + 1 ) ;
-    }
-    cWeek.innerHTML = "Semaine du "+ premier +" au "+ dernier +" " + retourneMois[d.getMonth()] + " " + d.getFullYear();
-
-}
-
-function reculeSemaine()
-{
-    lundiCourant.setDate( lundiCourant.getDate() - 7 ) ;
-    afficheCalendrier( lundiCourant ) ;
-
-}
-function avanceSemaine()
-{
-    lundiCourant.setDate( lundiCourant.getDate() + 7 ) ;
-    afficheCalendrier( lundiCourant ) ;
-
-}
-
-window.onload = function(){
-
-    afficheCalendrier( lundiCourant ) ;
-
-}
