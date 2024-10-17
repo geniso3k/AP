@@ -114,3 +114,14 @@ body {
 .event-slot:hover {
     background-color: #218838;
 }
+.resize-handle {
+    cursor: pointer; /* Par défaut */
+}
+
+.top-handle {
+    cursor: n-resize; /* Curseur de redimensionnement vers le haut */
+}
+
+.bottom-handle {
+    cursor: s-resize; /* Curseur de redimensionnement vers le bas */
+}

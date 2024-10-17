@@ -9,6 +9,7 @@ class DivCreator {
         this.resizingFrom = null; // Pour gérer le redimensionnement
         this.timeColumnHeight = null; // Hauteur de la colonne des heures
         this.createDiv();
+        this.minHeight = 17; // la longueur minimum du div
     }
 
     createDiv() {
@@ -30,7 +31,7 @@ class DivCreator {
         this.div.style.width = "100%";
         this.div.style.position = "absolute";
         this.div.style.top = `${this.Y - rect.top}px`;
-        this.div.style.minHeight = "35px";
+        this.div.style.minHeight = this.minHeight + "px";
 
         // Ne remplace pas tout le contenu de this.div, modifie seulement le texte
         this.topText = document.createElement("div"); // Stocke topText dans this.topText
@@ -67,8 +68,7 @@ class DivCreator {
         this.objDiv = new Heure(this.timeColumnHeight, this.div.offsetTop, this.div.offsetHeight);
 
         // Affiche l'heure de début et de fin sans écraser le contenu du div
-        this.topText.innerText = "Début : " + this.objDiv.calculTop();
-        this.sousDiv.innerText = "Fin : " + this.objDiv.calculHeight();
+        this.topText.innerHTML = "Début pour <b>" + this.objDiv.calculTop() + "</b> et fin pour <b>" + this.objDiv.calculHeight()+"</b>";
     }
 
     generateRandomColor() {
@@ -119,7 +119,7 @@ class DivCreator {
                     this.div.style.height = `${newHeight}px`;
                 } else {
                     let newHeight = initialHeight + direction;
-                    if (newHeight < 35) newHeight = 35;
+                    if (newHeight < this.minHeight) newHeight = this.minHeight;
                     this.div.style.height = `${newHeight}px`;
                 }
             }
@@ -133,12 +133,12 @@ class DivCreator {
                         newTop = 0;
                         newHeight = initialHeight + initialTop;
                     }
-                    if (newHeight < 35) newHeight = 35;
+                    if (newHeight < this.minHeight) newHeight = this.minHeight;
                     this.div.style.top = `${newTop}px`;
                     this.div.style.height = `${newHeight}px`;
                 } else {
                     let newHeight = initialHeight - direction;
-                    if (newHeight < 35) newHeight = 35;
+                    if (newHeight < this.minHeight) newHeight = this.minHeight;
                     this.div.style.top = `${initialTop + direction}px`;
                     this.div.style.height = `${newHeight}px`;
                 }
@@ -147,8 +147,7 @@ class DivCreator {
             // Met à jour les heures de début et de fin après redimensionnement
             this.objDiv.redefinirTop(this.div.offsetTop);
             this.objDiv.redefinirHeight(this.div.offsetHeight);
-            this.topText.innerText = "Début : " + this.objDiv.calculTop();
-            this.sousDiv.innerText = "Fin : " + this.objDiv.calculHeight();
+            this.topText.innerHTML = "Début pour <b>" + this.objDiv.calculTop() + "</b> et fin pour <b>" + this.objDiv.calculHeight()+"</b>";
         };
     
         const onMouseUp = () => {
