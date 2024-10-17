@@ -1,31 +1,32 @@
-// DivCreator.js
-
 class DivCreator {
-    constructor(column, X, Y) {
+    constructor(column, X, Y, shadowRoot, timeColumnHeight) {
         this.column = column;
         this.X = X;
         this.Y = Y;
         this.div = null;
         this.resizingFrom = null; // Détermine si on redimensionne par le bas ou le haut
+        this.shadowRoot = shadowRoot; // Référence au shadowRoot
+        this.timeColumnHeight = timeColumnHeight; // Hauteur totale de la colonne horaire
+        this.minHeight = 17; // La hauteur minimale du div
         this.createDiv();
-        this.minHeight = 17; // la longueur minimum du div
     }
 
     createDiv() {
-        this.div = document.createElement("div");
-        this.div.innerHTML = "Je suis là";
-        this.div.classList.add("event-slot");
-
-        let sousDiv = document.createElement("div");
-        sousDiv.innerHTML = "Dans la div";
-        sousDiv.classList.add("sousDiv");
+        // Création de sousDiv
+        this.sousDiv = document.createElement("div");
+        this.sousDiv.classList.add("sousDiv");
+        
+        
 
         const rect = this.column.getBoundingClientRect();
+        this.div = document.createElement("div");
+        this.div.classList.add("event-slot");
+
+        // Styles du div principal
         this.div.style.backgroundColor = this.generateRandomColor();
-        this.div.style.width = "100%";
-        this.div.style.position = "absolute";
-        this.div.style.top = `${this.Y - rect.top}px`;
+        this.div.style.top = `${this.Y}px`;
         this.div.style.minHeight = this.minHeight + "px";
+
 
         this.div.addEventListener("click", (event) => {
             event.stopPropagation(); // Empêche l'événement click de se propager à la colonne
@@ -48,21 +49,28 @@ class DivCreator {
         resizeHandleBottom.style.height = "10px";
         resizeHandleBottom.style.cursor = "s-resize";
 
+        // Création de topText
+        this.topText = document.createElement("div");
+        this.topText.classList.add("top-text");
+
+
+        
+
+        // Ajout des éléments au div principal
+        this.div.appendChild(this.topText);
         this.div.appendChild(resizeHandleTop);
         this.div.appendChild(resizeHandleBottom);
-        this.div.appendChild(sousDiv);
+        this.div.appendChild(this.sousDiv);
         this.column.appendChild(this.div);
 
         this.addDivEvents(resizeHandleTop, resizeHandleBottom);
-<<<<<<< HEAD
 
         // Calcule l'heure de début et de fin
         this.objDiv = new Heure(this.timeColumnHeight, this.div.offsetTop, this.div.offsetHeight);
 
         // Affiche l'heure de début et de fin sans écraser le contenu du div
-        this.topText.innerHTML = "Début pour <b>" + this.objDiv.calculTop() + "</b> et fin pour <b>" + this.objDiv.calculHeight()+"</b>";
-=======
->>>>>>> parent of 3644185 (Ajout de l'heure dynamique)
+        this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight()+"</b>";
+        this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure()+ "</b>";
     }
 
     generateRandomColor() {
@@ -91,17 +99,11 @@ class DivCreator {
         });
     }
 
-
     handleMouseDown(down) {
         let initialY = down.clientY;
         let initialTop = this.div.offsetTop;
         let initialHeight = this.div.offsetHeight;
         const containerHeight = this.column.offsetHeight;
-
-        document.onselectstart = (e) => { e.preventDefault() }
-        
-
-        // Empêche la création d'un autre div ou d'autres comportements de la souris
 
 
         // Fonction appelée pendant le déplacement de la souris
@@ -151,21 +153,21 @@ class DivCreator {
                     this.div.style.height = `${newHeight}px`;
                 }
             }
-    
+
             // Met à jour les heures de début et de fin après redimensionnement
             this.objDiv.redefinirTop(this.div.offsetTop);
             this.objDiv.redefinirHeight(this.div.offsetHeight);
-            this.topText.innerHTML = "Début pour <b>" + this.objDiv.calculTop() + "</b> et fin pour <b>" + this.objDiv.calculHeight()+"</b>";
-
+            this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight()+"</b>";
+            this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure()+ "</b>";
+        };
 
         const onMouseUp = () => {
+            // Dispatch un événement personnalisé pour ignorer le prochain clic
+            const event = new CustomEvent('ignoreNextClick', { bubbles: true, composed: true });
+            this.div.dispatchEvent(event);
 
-            ignoreNextClick = true; // Ignore le prochain clic (empêche la création d'un div)
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
-
-            // Empêche la création d'un autre div lorsque l'utilisateur relâche la souris
-
         };
 
         // Ajout des événements de déplacement et de relâchement
@@ -173,3 +175,5 @@ class DivCreator {
         document.addEventListener("mouseup", onMouseUp);
     }
 }
+
+

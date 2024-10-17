@@ -8,78 +8,14 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="planning-container">
-        <!-- Barre de navigation pour changer de semaine -->
-        <div class="navigation">
-            <button title="Semaine précédente" class="nav-button" id="prev-week" onclick="reculeSemaine()">&lt;</button>
-            <span id="current-week" class="current-week"></span>
-            <button title="Semaine suivante" class="nav-button" id="next-week" onclick="avanceSemaine('+')">&gt;</button>
-        </div>
-        
-        <!-- Conteneur du planning -->
-       <!-- Conteneur du planning -->
-<div class="planning">
-    <!-- Entête avec les jours de la semaine -->
-    <div class="planning-header-container">
-        <div class="planning-header">
-            <div class="time-header"></div>
-            <div class="day-header">Lundi 18</div>
-            <div class="day-header">Mardi 19</div>
-            <div class="day-header">Mercredi 20</div>
-            <div class="day-header">Jeudi 21</div>
-            <div class="day-header">Vendredi 22</div>
-            <div class="day-header">Samedi 23</div>
-            <div class="day-header">Dimanche 24</div>
-        </div>
-    </div>
+    <!-- Utilisation de la nouvelle balise Web Component -->
+    <planning-calendrier></planning-calendrier>
 
-    <!-- Conteneur du corps du planning -->
-    <div class="planning-body-container">
-        <div class="planning-body">
-            <!-- Colonne des heures -->
-            <div class="time-column">
-                <div class="time-slot">01:00</div>
-                <div class="time-slot">02:00</div>
-                <div class="time-slot">03:00</div>
-                <div class="time-slot">04:00</div>
-                <div class="time-slot">05:00</div>
-                <div class="time-slot">06:00</div>
-                <div class="time-slot">07:00</div>
-                <div class="time-slot">08:00</div>
-                <div class="time-slot">09:00</div>
-                <div class="time-slot">10:00</div>
-                <div class="time-slot">11:00</div>
-                <div class="time-slot">12:00</div>
-                <div class="time-slot">13:00</div>
-                <div class="time-slot">14:00</div>
-                <div class="time-slot">15:00</div>
-                <div class="time-slot">16:00</div>
-                <div class="time-slot">17:00</div>
-                <div class="time-slot">18:00</div>
-                <div class="time-slot">19:00</div>
-                <div class="time-slot">20:00</div>
-                <div class="time-slot">21:00</div>
-                <div class="time-slot">22:00</div>
-                <div class="time-slot">23:00</div>
-            </div>
-
-            <!-- Colonnes des jours avec les créneaux horaires -->
-            <div class="day-column" id="monday"></div>
-            <div class="day-column" id="tuesday"></div>
-            <div class="day-column" id="wednesday"></div>
-            <div class="day-column" id="thursday"></div>
-            <div class="day-column" id="friday"></div>
-            <div class="day-column" id="saturday"></div>
-            <div class="day-column" id="sunday"></div>
-        </div>
-    </div>
-</div>
-
-    </div>
-
-    <!-- Script pour la gestion des interactions -->
-    <script src="js/index.js"></script>
-    <script src="js/class/DivCreator.js"></script>
-    <script src="js/dates.js"></script>
+    <!-- Scripts JS -->
+   
+    <script src="js/class/DivCreator.js"></script> <!-- DivCreator.js -->
+    <script src="js/class/Heure.js"></script> <!-- Heure.js -->
+    <script src="js/planningComponent.js"></script> <!-- planningComponent.js -->
+    <script src="js/dates.js"></script> <!-- dates.js, qui utilise les autres classes -->
 </body>
 </html>

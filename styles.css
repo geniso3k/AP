@@ -86,7 +86,7 @@ body {
 .time-slot {
     height: 50px;
     display: flex;
-    align-items: center;
+
     justify-content: center;
     border-bottom: 1px solid #ddd;
     color: #888;
@@ -124,4 +124,25 @@ body {
 
 .bottom-handle {
     cursor: s-resize; /* Curseur de redimensionnement vers le bas */
+}
+.event-slot {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: /* votre couleur de fond */;
+    min-height: 40px; /* Ajustez selon vos besoins */
+}
+
+.top-text, .sousDiv {
+    padding: 2px;
+    font-size: 12px;
+}
+
+.sousDiv {
+    margin-top: auto;
+}
+
+
+.event-slot * {
+    user-select: none;
 }
