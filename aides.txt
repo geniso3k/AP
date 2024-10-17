@@ -1,0 +1,167 @@
+1.1 Affichage et navigation
+1) Affichage des jours en colonnes et des heures en lignes avec un paramètre pour les jours/heures ouvrés :
+
+Ce qui manque : Un paramètre permettant de basculer entre l'affichage des jours/heures ouvrés et l'affichage de tous les jours/heures de la semaine.
+Ce qui doit être fait : Ajouter un paramètre dans votre composant Planning qui permet de configurer l'affichage des jours et des heures. Vous devrez ajuster la méthode render() pour qu'elle tienne compte de ce paramètre lors de la génération du planning.
+2) Navigation entre les semaines avec les boutons et/ou le clavier :
+
+Ce qui manque :
+La gestion des événements clic sur les boutons prev-week et next-week pour changer de semaine.
+La gestion des touches fléchées gauche et droite pour naviguer entre les semaines.
+Ce qui doit être fait :
+Implémenter des écouteurs d'événements sur les boutons pour mettre à jour la semaine affichée.
+Ajouter des écouteurs d'événements clavier pour détecter les pressions sur les touches fléchées et ajuster la semaine en conséquence.
+Mettre à jour l'affichage des dates dans les en-têtes des jours lors du changement de semaine.
+3) Navigation entre les heures avec une barre de défilement verticale et/ou le clavier :
+
+Ce qui manque : La gestion du défilement vertical pour naviguer entre les heures, ainsi que la gestion des touches fléchées haut et bas.
+Ce qui doit être fait :
+Ajouter une barre de défilement verticale à la zone contenant les heures.
+Implémenter la détection de la molette de la souris pour permettre le défilement.
+Ajouter des écouteurs d'événements clavier pour les touches fléchées haut et bas pour contrôler le défilement.
+4) Les en-têtes des jours et la colonne des heures doivent rester visibles lors du défilement :
+
+Ce qui manque : Les en-têtes des jours et la colonne des heures ne restent pas fixes lors du défilement.
+Ce qui doit être fait :
+Utiliser du CSS (par exemple, position: sticky) pour fixer la position des en-têtes des jours en haut et de la colonne des heures sur le côté gauche.
+S'assurer que la structure HTML supporte le positionnement nécessaire pour que ces éléments restent visibles lors du défilement.
+5) Affichage des événements sur plusieurs jours avec des créneaux horaires :
+
+Ce qui manque :
+La gestion des événements qui s'étendent sur plusieurs jours.
+La création automatique de plusieurs créneaux horaires pour un événement multi-jours.
+Ce qui doit être fait :
+Créer une classe Evenement qui contient les informations de base d'un événement.
+Lors de la création d'un événement multi-jours, générer plusieurs instances de Creneau, une pour chaque jour concerné.
+Adapter le rendu pour afficher ces créneaux sur les jours appropriés.
+6) Gestion des événements qui se chevauchent avec ajustement de la largeur :
+
+Ce qui manque : La capacité à afficher plusieurs créneaux horaires qui se chevauchent en ajustant leur largeur pour éviter qu'ils ne se superposent.
+Ce qui doit être fait :
+Implémenter un algorithme qui détecte les chevauchements d'événements dans le même jour.
+Ajuster la position et la largeur des divs des événements pour qu'ils s'affichent côte à côte sans se superposer.
+Gérer les cas où plusieurs événements se chevauchent simultanément.
+7) Adaptation de l'affichage lors du redimensionnement du planning :
+
+Ce qui manque : La gestion réactive (responsive) du planning lorsque ses dimensions changent.
+Ce qui doit être fait :
+Utiliser des unités relatives ou des media queries pour que le planning s'adapte à la taille de son conteneur.
+Écouter les événements de redimensionnement (resize) pour ajuster le contenu si nécessaire.
+S'assurer que les calculs de positions et de dimensions des événements tiennent compte des dimensions actuelles du planning.
+1.2 Manipulation des créneaux horaires associés aux événements
+8) Création de la classe Evenement avec les attributs requis :
+
+Ce qui manque : La classe Evenement n'est pas définie dans votre code.
+Ce qui doit être fait :
+Créer une classe Evenement avec les attributs suivants : identifiant, date et heure de début, date et heure de fin, libellé, couleur.
+Prévoir la possibilité d'étendre cette classe pour que les développeurs puissent ajouter des informations supplémentaires.
+9) Création de la classe Creneau pour les créneaux horaires :
+
+Ce qui manque : La classe Creneau n'est pas présente dans votre code.
+Ce qui doit être fait :
+Créer une classe Creneau contenant les informations nécessaires pour représenter un créneau horaire : date du jour, heure de début, heure de fin, référence vers l'événement associé.
+Gérer la création de plusieurs créneaux pour un événement multi-jours.
+10) Implémentation d'un bouton "Nouveau" pour créer des événements multi-jours :
+
+Ce qui manque : Un bouton "Nouveau" et un formulaire pour créer des événements multi-jours.
+Ce qui doit être fait :
+Ajouter un bouton "Nouveau" à l'interface du planning.
+Créer un formulaire permettant de saisir les détails de l'événement (libellé, date et heure de début, date et heure de fin, couleur).
+À la validation du formulaire, créer une instance de Evenement et les Creneau associés.
+11) Création graphique d'un événement d'une journée avec la souris et double-clic pour modifier :
+
+Ce qui manque :
+La possibilité de créer un événement en cliquant et glissant la souris sur le planning.
+Le double-clic sur un créneau pour afficher le formulaire de mise à jour.
+Ce qui doit être fait :
+Implémenter la création d'un créneau en cliquant et en maintenant le clic sur le planning, puis en relâchant à l'heure de fin souhaitée.
+Gérer le double-clic sur un créneau pour ouvrir le formulaire de modification de l'événement.
+Pré-remplir le formulaire avec les informations de l'événement existant.
+12) Mise en place de la classe Planning contenant les événements :
+
+Ce qui manque : L'attribut evenements dans la classe Planning pour stocker les événements.
+Ce qui doit être fait :
+Ajouter un attribut evenements dans la classe Planning, qui est un tableau d'instances de Evenement.
+Gérer l'ajout, la modification et la suppression des événements dans ce tableau.
+13) Modification graphique des créneaux avec la souris :
+
+Ce qui manque : La capacité de modifier graphiquement un créneau en le déplaçant ou en redimensionnant avec la souris.
+Ce qui doit être fait :
+Ajouter des écouteurs d'événements pour permettre le glisser-déposer des créneaux sur le planning.
+Permettre le redimensionnement des créneaux en ajustant leur heure de début et de fin.
+Mettre à jour les instances de Creneau et Evenement en conséquence.
+14) Double-clic pour modifier un événement et utilisation de la touche ÉCHAP :
+
+Ce qui manque :
+La gestion du double-clic pour ouvrir le formulaire de mise à jour.
+L'utilisation de la touche ÉCHAP pour annuler les modifications.
+Ce qui doit être fait :
+Implémenter le double-clic sur un créneau pour ouvrir le formulaire de modification.
+Ajouter un écouteur d'événements pour détecter l'appui sur la touche ÉCHAP et annuler les modifications en cours.
+Gérer l'affichage et la suppression des éléments graphiques utilisés pour la modification.
+1.3 Création d’un planning en JS
+15) Insertion du Web Component dans une page HTML via JavaScript :
+
+Ce qui manque : Votre composant Planning est défini comme un Web Component, mais il n'y a pas d'exemple d'insertion dans une page HTML via JavaScript tel que décrit.
+Ce qui doit être fait :
+Vérifier que votre composant peut être créé et inséré dynamiquement dans une page en utilisant JavaScript, comme montré dans l'exemple du cahier des charges.
+Fournir un exemple d'utilisation dans la documentation pour guider les développeurs.
+1.4 Gestion des paramètres du planning
+16) Méthode setParametres(Object) pour configurer le planning :
+
+Ce qui manque : La méthode setParametres n'est pas implémentée dans votre classe Planning.
+Ce qui doit être fait :
+Ajouter la méthode setParametres(parametres) qui accepte un objet de configuration.
+Gérer les paramètres tels que les couleurs par défaut, l'affichage des jours ouvrés, etc.
+17) Méthode getParametres() pour récupérer la configuration :
+
+Ce qui manque : La méthode getParametres n'est pas présente.
+Ce qui doit être fait :
+Implémenter getParametres() pour renvoyer l'objet de configuration actuel du planning.
+18) Méthodes pour charger et sauvegarder les paramètres dans le Local Storage :
+
+Ce qui manque :
+Les méthodes loadParametresFromLocalStorage(cle) et saveParametresToLocalStorage(cle) ne sont pas implémentées.
+Ce qui doit être fait :
+Ajouter ces méthodes à la classe Planning pour permettre la persistance des paramètres.
+Utiliser l'API localStorage pour enregistrer et charger les paramètres en utilisant la clé fournie.
+1.5 Gestion de la persistance des données du planning
+19) Gestion des données via des requêtes pour charger et enregistrer les événements :
+
+Ce qui manque : La gestion de la persistance des données n'est pas implémentée. Votre code ne prévoit pas de mécanisme pour charger ou enregistrer les événements depuis un stockage.
+Ce qui doit être fait :
+Créer des méthodes pour charger les événements depuis un objet JSON ou une source de données.
+Implémenter des méthodes pour sauvegarder, modifier et supprimer des événements et des créneaux.
+Prévoir une abstraction pour permettre à d'autres développeurs de connecter le planning à une base de données ou une API.
+1.6 Méthodes nécessaires à la gestion d’un créneau
+20) Méthodes creeObjetHTML(container) et creeObjetHTMLPourMiseAJour(container) dans la classe Creneau :
+
+Ce qui manque : La classe Creneau n'existe pas, et ces méthodes ne sont pas implémentées.
+Ce qui doit être fait :
+Créer la classe Creneau avec les méthodes demandées.
+creeObjetHTML(container) doit générer les éléments HTML pour afficher le créneau dans le planning.
+creeObjetHTMLPourMiseAJour(container) doit créer les éléments nécessaires pour modifier le créneau avec la souris.
+1.7 Créer le Web Component « planning »
+21) Possibilité d'insérer le planning en utilisant une balise personnalisée :
+
+Ce qui manque : Votre composant est défini sous la balise <planning-calendrier>, mais le cahier des charges mentionne une balise <planning>.
+Ce qui doit être fait :
+Harmoniser le nom de votre composant pour correspondre au cahier des charges, ou adapter la documentation pour refléter le nom actuel.
+S'assurer que le composant peut être utilisé en insérant la balise personnalisée dans le code HTML.
+Autres points importants
+Documentation technique et utilisateur :
+
+Ce qui manque : La documentation technique (diagrammes UML, descriptions des classes et méthodes) et la documentation utilisateur ne sont pas mentionnées.
+Ce qui doit être fait :
+Rédiger une documentation technique complète pour aider d'autres développeurs à comprendre et à contribuer à votre code.
+Rédiger une documentation utilisateur pour expliquer comment utiliser le planning, créer et modifier des événements.
+Journal de bord :
+
+Ce qui manque : Un journal de bord (journal.txt) consignant les observations, problèmes rencontrés, bugs et corrections.
+Ce qui doit être fait :
+Tenir un journal de bord à jour et le conserver dans votre dépôt GIT.
+Présentation du projet :
+
+Ce qui manque : Préparation d'une présentation avec démonstration du projet.
+Ce qui doit être fait :
+Préparer un support de présentation pour expliquer votre projet et ses fonctionnalités.

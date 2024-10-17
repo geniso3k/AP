@@ -1,5 +1,7 @@
+// DivCreator.js
+
 class DivCreator {
-    constructor(column, X, Y, shadowRoot, timeColumnHeight) {
+    constructor(column, X, Y, shadowRoot, timeColumnHeight, shouldSave = true) {
         this.column = column;
         this.X = X;
         this.Y = Y;
@@ -8,6 +10,7 @@ class DivCreator {
         this.shadowRoot = shadowRoot; // Référence au shadowRoot
         this.timeColumnHeight = timeColumnHeight; // Hauteur totale de la colonne horaire
         this.minHeight = 17; // La hauteur minimale du div
+        this.shouldSave = shouldSave; // Nouveau paramètre pour contrôler la sauvegarde
         this.createDiv();
     }
 
@@ -15,8 +18,6 @@ class DivCreator {
         // Création de sousDiv
         this.sousDiv = document.createElement("div");
         this.sousDiv.classList.add("sousDiv");
-        
-        
 
         const rect = this.column.getBoundingClientRect();
         this.div = document.createElement("div");
@@ -26,7 +27,6 @@ class DivCreator {
         this.div.style.backgroundColor = this.generateRandomColor();
         this.div.style.top = `${this.Y}px`;
         this.div.style.minHeight = this.minHeight + "px";
-
 
         this.div.addEventListener("click", (event) => {
             event.stopPropagation(); // Empêche l'événement click de se propager à la colonne
@@ -53,9 +53,6 @@ class DivCreator {
         this.topText = document.createElement("div");
         this.topText.classList.add("top-text");
 
-
-        
-
         // Ajout des éléments au div principal
         this.div.appendChild(this.topText);
         this.div.appendChild(resizeHandleTop);
@@ -64,13 +61,74 @@ class DivCreator {
         this.column.appendChild(this.div);
 
         this.addDivEvents(resizeHandleTop, resizeHandleBottom);
+        this.topText.innerHTML = "Début : Chargement %";
+        this.sousDiv.innerHTML = "Durée : ...";
 
         // Calcule l'heure de début et de fin
         this.objDiv = new Heure(this.timeColumnHeight, this.div.offsetTop, this.div.offsetHeight);
 
-        // Affiche l'heure de début et de fin sans écraser le contenu du div
-        this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight()+"</b>";
-        this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure()+ "</b>";
+        this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight() + "</b>";
+        this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure() + "</b>";
+
+        // Sauvegarder l'événement uniquement si shouldSave est vrai
+        if (this.shouldSave) {
+            this.saveEvent();
+        }
+    }
+
+    generateUniqueId() {
+        return '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    saveEvent() {
+        // Obtenir la date associée à la colonne
+        const dateString = this.column.dataset.date; // Date au format YYYY-MM-DD
+
+        // Obtenir les informations de l'événement
+        const eventData = {
+            id: this.generateUniqueId(),
+            dayId: this.column.id,
+            date: dateString, // Ajouter la date
+            top: this.div.style.top,
+            height: this.div.style.height,
+            color: this.div.style.backgroundColor,
+            // Autres informations si nécessaire
+        };
+
+        let events = JSON.parse(localStorage.getItem('events')) || [];
+
+        events.push(eventData);
+
+        localStorage.setItem('events', JSON.stringify(events));
+
+        this.div.dataset.eventId = eventData.id;
+    }
+
+    updateEventInStorage() {
+        const eventId = this.div.dataset.eventId;
+        let events = JSON.parse(localStorage.getItem('events')) || [];
+
+        const eventIndex = events.findIndex(event => event.id === eventId);
+        if (eventIndex !== -1) {
+            // Mettre à jour les informations
+            events[eventIndex].top = this.div.style.top;
+            events[eventIndex].height = this.div.style.height;
+            // Autres mises à jour si nécessaire
+
+            // Sauvegarder les modifications
+            localStorage.setItem('events', JSON.stringify(events));
+        }
+    }
+
+    deleteEventFromStorage() {
+        const eventId = this.div.dataset.eventId;
+        let events = JSON.parse(localStorage.getItem('events')) || [];
+
+        // Filtrer l'événement à supprimer
+        events = events.filter(event => event.id !== eventId);
+
+        // Sauvegarder les modifications
+        localStorage.setItem('events', JSON.stringify(events));
     }
 
     generateRandomColor() {
@@ -82,6 +140,8 @@ class DivCreator {
         // Clic droit pour supprimer le div
         this.div.addEventListener("contextmenu", (event) => {
             this.div.remove();
+            // Supprimer du Local Storage
+            this.deleteEventFromStorage();
             event.preventDefault();
             return false;
         });
@@ -104,7 +164,6 @@ class DivCreator {
         let initialTop = this.div.offsetTop;
         let initialHeight = this.div.offsetHeight;
         const containerHeight = this.column.offsetHeight;
-
 
         // Fonction appelée pendant le déplacement de la souris
         const onMouseMove = (position) => {
@@ -157,11 +216,13 @@ class DivCreator {
             // Met à jour les heures de début et de fin après redimensionnement
             this.objDiv.redefinirTop(this.div.offsetTop);
             this.objDiv.redefinirHeight(this.div.offsetHeight);
-            this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight()+"</b>";
-            this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure()+ "</b>";
+            this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight() + "</b>";
+            this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure() + "</b>";
         };
 
         const onMouseUp = () => {
+            this.updateEventInStorage();
+
             // Dispatch un événement personnalisé pour ignorer le prochain clic
             const event = new CustomEvent('ignoreNextClick', { bubbles: true, composed: true });
             this.div.dispatchEvent(event);
@@ -175,5 +236,3 @@ class DivCreator {
         document.addEventListener("mouseup", onMouseUp);
     }
 }
-
-

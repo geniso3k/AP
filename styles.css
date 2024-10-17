@@ -3,7 +3,6 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-
 }
 
 .planning-container {
@@ -43,60 +42,87 @@ body {
 /* Styles du planning */
 .planning {
     display: flex;
-    height: 4000px;
     flex-direction: column;
+    overflow: hidden;
+}
+
+.planning-scroll-container {
     overflow-x: auto;
-    overflow-y: auto; /* Empêche un défilement vertical inutile */
+}
+
+.planning-header-container {
+    flex-shrink: 0;
 }
 
 .planning-header,
 .planning-body {
     display: grid;
-    grid-template-columns: 60px repeat(7, 1fr); /* Les colonnes sont définies de la même manière pour header et body */
-    min-width: 800px; /* Permet de garder une largeur minimale afin d'éviter les décalages */
+    grid-template-columns: minmax(50px, 80px) repeat(7, 1fr);
+}
+.planning-body{
+
+    height: 20px;
+
 }
 
 .planning-header {
     background-color: #f0f0f0;
     border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    overflow-y: scroll; /* Pour éviter les décalages de largeur */
+}
+
+.time-header,
+.time-column {
+    grid-column: 1 / 2; /* Occupe la première colonne de la grille */
+    background-color: #f7f7f7;
+    border-right: 1px solid #ddd;
+    position: sticky;
+    left: 0;
+    z-index: 2;
 }
 
 .time-header {
-    width: 60px;
-}
-
-.day-header {
-    text-align: center;
-    padding: 10px;
-    border-left: 1px solid #ddd;
-    background-color: #e9ecef;
-    font-weight: bold;
-}
-
-/* Corps du planning */
-.planning-body {
-    height: 600px;
-}
-
-.time-column {
-    background-color: #f7f7f7;
-    border-right: 1px solid #ddd;
+    /* Hauteur fixe pour l'en-tête des heures */
+    height: 50px;
 }
 
 .time-slot {
     height: 50px;
     display: flex;
-
     justify-content: center;
+    align-items: center; /* Centrer verticalement */
     border-bottom: 1px solid #ddd;
     color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.day-header {
+    grid-column: auto; /* Laisse le navigateur déterminer la position */
+    text-align: center;
+    padding: 10px;
+    border-left: 1px solid #ddd;
+    background-color: #e9ecef;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .day-column {
+    grid-column: auto;
     border-left: 1px solid #ddd;
     position: relative;
-    display: grid;
-    grid-template-rows: repeat(10, 50px); /* Ajuste le nombre de créneaux horaires */
+}
+
+/* Corps du planning */
+.planning-body-container {
+    overflow-y: auto;
+    height: 600px; /* Ajustez selon vos besoins */
 }
 
 /* Style des créneaux horaires (événements) */
@@ -109,28 +135,28 @@ body {
     font-size: 12px;
     cursor: pointer;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 2px); /* Pour tenir compte des bordures */
+    min-height: 40px;
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
 }
 
 .event-slot:hover {
     background-color: #218838;
 }
+
 .resize-handle {
-    cursor: pointer; /* Par défaut */
+    cursor: pointer;
 }
 
 .top-handle {
-    cursor: n-resize; /* Curseur de redimensionnement vers le haut */
+    cursor: n-resize;
 }
 
 .bottom-handle {
-    cursor: s-resize; /* Curseur de redimensionnement vers le bas */
-}
-.event-slot {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background-color: /* votre couleur de fond */;
-    min-height: 40px; /* Ajustez selon vos besoins */
+    cursor: s-resize;
 }
 
 .top-text, .sousDiv {
@@ -142,7 +168,54 @@ body {
     margin-top: auto;
 }
 
-
 .event-slot * {
     user-select: none;
+}
+
+/* Styles pour empêcher la sélection de texte */
+.day-column, .time-column {
+    user-select: none;
+}
+
+/* Media queries pour les petits écrans */
+@media (max-width: 600px) {
+    .navigation {
+        flex-direction: column;
+        align-items: center;
+    }
+    .nav-button {
+        margin-bottom: 5px;
+    }
+    .day-header {
+        font-size: 10px;
+        padding: 5px;
+    }
+    .time-slot {
+        height: 40px;
+        font-size: 10px;
+    }
+    .event-slot {
+        font-size: 10px;
+        padding: 3px;
+    }
+    .time-column, .time-header {
+        min-width: 40px;
+        max-width: 60px;
+    }
+    .top-text, .sousDiv {
+        font-size: 10px;
+    }
+}
+
+/* Styles supplémentaires pour l'alignement et la responsivité */
+
+
+.day-column {
+    /* S'assurer que les colonnes des jours remplissent toute la hauteur disponible */
+    display: grid;
+}
+
+.event-slot {
+    /* Ajuster la largeur des événements pour éviter le débordement */
+    width: calc(100% - 4px); /* Ajustement supplémentaire si nécessaire */
 }
