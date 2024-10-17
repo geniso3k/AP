@@ -1,16 +1,18 @@
+// DivCreator.js
+
 class DivCreator {
     constructor(column, X, Y) {
-        this.column = column; 
-        this.X = X; 
-        this.Y = Y; 
-        this.div = null; 
-        this.isResizing = false; 
-        this.createDiv(); 
+        this.column = column;
+        this.X = X;
+        this.Y = Y;
+        this.div = null;
+        this.resizingFrom = null; // Détermine si on redimensionne par le bas ou le haut
+        this.createDiv();
     }
 
     createDiv() {
-        this.div = document.createElement("div"); 
-        this.div.innerHTML = "Je suis là"; 
+        this.div = document.createElement("div");
+        this.div.innerHTML = "Je suis là";
         this.div.classList.add("event-slot");
 
         let sousDiv = document.createElement("div");
@@ -18,17 +20,39 @@ class DivCreator {
         sousDiv.classList.add("sousDiv");
 
         const rect = this.column.getBoundingClientRect();
-
         this.div.style.backgroundColor = this.generateRandomColor();
         this.div.style.width = "100%";
-        this.div.style.position = "absolute"; 
+        this.div.style.position = "absolute";
         this.div.style.top = `${this.Y - rect.top}px`;
-        this.div.style.minHeight = "35px"; 
-        
-        this.column.appendChild(this.div);
-        this.div.appendChild(sousDiv);
+        this.div.style.minHeight = "35px";
 
-        this.addDivEvents();
+        this.div.addEventListener("click", (event) => {
+            event.stopPropagation(); // Empêche l'événement click de se propager à la colonne
+        });
+
+        // Drag handles (pour redimensionner en haut ou en bas)
+        let resizeHandleTop = document.createElement("div");
+        resizeHandleTop.classList.add("resize-handle", "top-handle");
+        resizeHandleTop.style.position = "absolute";
+        resizeHandleTop.style.top = "0";
+        resizeHandleTop.style.width = "100%";
+        resizeHandleTop.style.height = "10px";
+        resizeHandleTop.style.cursor = "n-resize";
+
+        let resizeHandleBottom = document.createElement("div");
+        resizeHandleBottom.classList.add("resize-handle", "bottom-handle");
+        resizeHandleBottom.style.position = "absolute";
+        resizeHandleBottom.style.bottom = "0";
+        resizeHandleBottom.style.width = "100%";
+        resizeHandleBottom.style.height = "10px";
+        resizeHandleBottom.style.cursor = "s-resize";
+
+        this.div.appendChild(resizeHandleTop);
+        this.div.appendChild(resizeHandleBottom);
+        this.div.appendChild(sousDiv);
+        this.column.appendChild(this.div);
+
+        this.addDivEvents(resizeHandleTop, resizeHandleBottom);
     }
 
     generateRandomColor() {
@@ -36,72 +60,97 @@ class DivCreator {
         return "#" + rndm;
     }
 
-    addDivEvents() {
+    addDivEvents(resizeHandleTop, resizeHandleBottom) {
+        // Clic droit pour supprimer le div
         this.div.addEventListener("contextmenu", (event) => {
-            this.div.remove(); 
+            this.div.remove();
             event.preventDefault();
             return false;
         });
 
-        this.div.addEventListener("mousedown", (down) => {
+        // Redimensionnement par le haut
+        resizeHandleTop.addEventListener("mousedown", (down) => {
+            this.resizingFrom = "top";
             this.handleMouseDown(down);
         });
 
-        this.div.addEventListener("click", (event) => {
-            if (this.isResizing) {
-                event.preventDefault(); 
-                this.isResizing = false;
-            }
+        // Redimensionnement par le bas
+        resizeHandleBottom.addEventListener("mousedown", (down) => {
+            this.resizingFrom = "bottom";
+            this.handleMouseDown(down);
         });
     }
 
+
     handleMouseDown(down) {
-        let initialY = down.clientY; 
-        let initialTop = this.div.offsetTop; 
-        let initialHeight = this.div.offsetHeight; 
-        const containerHeight = this.column.offsetHeight; // Hauteur du conteneur parent
-        this.isResizing = false;
+        let initialY = down.clientY;
+        let initialTop = this.div.offsetTop;
+        let initialHeight = this.div.offsetHeight;
+        const containerHeight = this.column.offsetHeight;
 
+        isResizing = true; // Le redimensionnement commence (variable globale)
+
+        // Empêche la création d'un autre div ou d'autres comportements de la souris
         down.stopPropagation();
+        down.preventDefault();
 
+        // Fonction appelée pendant le déplacement de la souris
         const onMouseMove = (position) => {
-            this.isResizing = true;
             let currentY = position.clientY;
+            let direction = currentY - initialY;
 
-            if (currentY > initialY) {
-                // Redimension vers le bas
-                let newHeight = initialHeight + (currentY - initialY);
-                // Vérifie que la hauteur ne dépasse pas la hauteur du conteneur
-                if (newHeight + initialTop > containerHeight) {
-                    newHeight = containerHeight - initialTop;
+            // Si on redimensionne par le bas
+            if (this.resizingFrom === "bottom") {
+                if (direction >= 0) {
+                    // Redimensionnement vers le bas
+                    let newHeight = initialHeight + direction;
+                    if (newHeight + initialTop > containerHeight) {
+                        newHeight = containerHeight - initialTop;
+                    }
+                    this.div.style.height = `${newHeight}px`;
+                } else {
+                    // Redimensionnement vers le haut depuis le bas
+                    let newHeight = initialHeight + direction;
+                    if (newHeight < 35) newHeight = 35; // Limite de hauteur minimale
+                    this.div.style.height = `${newHeight}px`;
                 }
-                this.div.style.height = `${newHeight}px`;
+            }
 
-            } else {
-                // Redimension vers le haut
-                let newTop = initialTop - (initialY - currentY);
-                // Limiter la position du haut à 0 (pour ne pas sortir du conteneur)
-                if (newTop < 0) {
-                    newTop = 0;
+            // Si on redimensionne par le haut
+            if (this.resizingFrom === "top") {
+                if (direction <= 0) {
+                    // Redimensionnement vers le haut (on bouge le top et on change la hauteur)
+                    let newTop = initialTop + direction;
+                    let newHeight = initialHeight - direction;
+                    if (newTop < 0) {
+                        newTop = 0;
+                        newHeight = initialHeight + initialTop;
+                    }
+                    if (newHeight < 35) newHeight = 35; // Limite de hauteur minimale
+                    this.div.style.top = `${newTop}px`;
+                    this.div.style.height = `${newHeight}px`;
+                } else {
+                    // Si on essaie d'agrandir en partant du haut vers le bas, ajuster uniquement la hauteur
+                    let newHeight = initialHeight - direction;
+                    if (newHeight < 35) newHeight = 35; // Limite de hauteur minimale
+                    this.div.style.top = `${initialTop + direction}px`; // Ajustement du top
+                    this.div.style.height = `${newHeight}px`;
                 }
-                let newHeight = initialHeight + (initialTop - newTop);
-
-                // Limite pour la hauteur minimale
-                if (newHeight < 35) {
-                    newHeight = 35;
-                    newTop = initialTop + (initialHeight - newHeight);
-                }
-
-                this.div.style.top = `${newTop}px`; 
-                this.div.style.height = `${newHeight}px`;
             }
         };
 
-        const onMouseUp = () => {
+        const onMouseUp = (up) => {
+            isResizing = false; // Le redimensionnement est terminé
+            ignoreNextClick = true; // Ignore le prochain clic (empêche la création d'un div)
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
+
+            // Empêche la création d'un autre div lorsque l'utilisateur relâche la souris
+            up.preventDefault();
+            up.stopPropagation();
         };
 
+        // Ajout des événements de déplacement et de relâchement
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     }
