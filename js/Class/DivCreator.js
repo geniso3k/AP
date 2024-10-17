@@ -1,23 +1,29 @@
-// DivCreator.js
-
 class DivCreator {
     constructor(column, X, Y) {
         this.column = column;
         this.X = X;
         this.Y = Y;
         this.div = null;
-        this.resizingFrom = null; // Détermine si on redimensionne par le bas ou le haut
+        this.topText = null; // Propriété pour le texte du top
+        this.sousDiv = null; // Propriété pour la sous-div
+        this.resizingFrom = null; // Pour gérer le redimensionnement
+        this.timeColumnHeight = null; // Hauteur de la colonne des heures
         this.createDiv();
     }
 
     createDiv() {
+        // Sélectionne la colonne des heures avec la classe "time-column"
+        let timeColumn = document.querySelector('.time-column');
+
+        // Récupère la hauteur de la colonne
+        this.timeColumnHeight = timeColumn.offsetHeight;
+
         this.div = document.createElement("div");
-        this.div.innerHTML = "Je suis là";
         this.div.classList.add("event-slot");
 
-        let sousDiv = document.createElement("div");
-        sousDiv.innerHTML = "Dans la div";
-        sousDiv.classList.add("sousDiv");
+        // Sous div pour l'affichage des heures
+        this.sousDiv = document.createElement("div");
+        this.sousDiv.classList.add("sousDiv");
 
         const rect = this.column.getBoundingClientRect();
         this.div.style.backgroundColor = this.generateRandomColor();
@@ -26,9 +32,13 @@ class DivCreator {
         this.div.style.top = `${this.Y - rect.top}px`;
         this.div.style.minHeight = "35px";
 
-        this.div.addEventListener("click", (event) => {
-            event.stopPropagation(); // Empêche l'événement click de se propager à la colonne
-        });
+        // Ne remplace pas tout le contenu de this.div, modifie seulement le texte
+        this.topText = document.createElement("div"); // Stocke topText dans this.topText
+        this.topText.classList.add("top-text"); // Ajout d'une classe pour mieux styliser
+        this.div.appendChild(this.topText); // Ajoute le texte du top
+
+        // Modifie directement le texte de this.sousDiv
+        this.div.appendChild(this.sousDiv); // Ajoute la sous-div dans le div principal
 
         // Drag handles (pour redimensionner en haut ou en bas)
         let resizeHandleTop = document.createElement("div");
@@ -49,10 +59,16 @@ class DivCreator {
 
         this.div.appendChild(resizeHandleTop);
         this.div.appendChild(resizeHandleBottom);
-        this.div.appendChild(sousDiv);
         this.column.appendChild(this.div);
 
         this.addDivEvents(resizeHandleTop, resizeHandleBottom);
+
+        // Calcule l'heure de début et de fin
+        this.objDiv = new Heure(this.timeColumnHeight, this.div.offsetTop, this.div.offsetHeight);
+
+        // Affiche l'heure de début et de fin sans écraser le contenu du div
+        this.topText.innerText = "Début : " + this.objDiv.calculTop();
+        this.sousDiv.innerText = "Fin : " + this.objDiv.calculHeight();
     }
 
     generateRandomColor() {
@@ -81,76 +97,68 @@ class DivCreator {
         });
     }
 
-
     handleMouseDown(down) {
         let initialY = down.clientY;
         let initialTop = this.div.offsetTop;
         let initialHeight = this.div.offsetHeight;
         const containerHeight = this.column.offsetHeight;
-
+    
         document.onselectstart = (e) => { e.preventDefault() }
-        
-
-        // Empêche la création d'un autre div ou d'autres comportements de la souris
-
-
-        // Fonction appelée pendant le déplacement de la souris
+    
         const onMouseMove = (position) => {
             let currentY = position.clientY;
             let direction = currentY - initialY;
-
+    
             // Si on redimensionne par le bas
             if (this.resizingFrom === "bottom") {
                 if (direction >= 0) {
-                    // Redimensionnement vers le bas
                     let newHeight = initialHeight + direction;
                     if (newHeight + initialTop > containerHeight) {
                         newHeight = containerHeight - initialTop;
                     }
                     this.div.style.height = `${newHeight}px`;
                 } else {
-                    // Redimensionnement vers le haut depuis le bas
                     let newHeight = initialHeight + direction;
-                    if (newHeight < 35) newHeight = 35; // Limite de hauteur minimale
+                    if (newHeight < 35) newHeight = 35;
                     this.div.style.height = `${newHeight}px`;
                 }
             }
-
+    
             // Si on redimensionne par le haut
             if (this.resizingFrom === "top") {
                 if (direction <= 0) {
-                    // Redimensionnement vers le haut (on bouge le top et on change la hauteur)
                     let newTop = initialTop + direction;
                     let newHeight = initialHeight - direction;
                     if (newTop < 0) {
                         newTop = 0;
                         newHeight = initialHeight + initialTop;
                     }
-                    if (newHeight < 35) newHeight = 35; // Limite de hauteur minimale
+                    if (newHeight < 35) newHeight = 35;
                     this.div.style.top = `${newTop}px`;
                     this.div.style.height = `${newHeight}px`;
                 } else {
-                    // Si on essaie d'agrandir en partant du haut vers le bas, ajuster uniquement la hauteur
                     let newHeight = initialHeight - direction;
-                    if (newHeight < 35) newHeight = 35; // Limite de hauteur minimale
-                    this.div.style.top = `${initialTop + direction}px`; // Ajustement du top
+                    if (newHeight < 35) newHeight = 35;
+                    this.div.style.top = `${initialTop + direction}px`;
                     this.div.style.height = `${newHeight}px`;
                 }
             }
+    
+            // Met à jour les heures de début et de fin après redimensionnement
+            this.objDiv.redefinirTop(this.div.offsetTop);
+            this.objDiv.redefinirHeight(this.div.offsetHeight);
+            this.topText.innerText = "Début : " + this.objDiv.calculTop();
+            this.sousDiv.innerText = "Fin : " + this.objDiv.calculHeight();
         };
-
+    
         const onMouseUp = () => {
-
-            ignoreNextClick = true; // Ignore le prochain clic (empêche la création d'un div)
+            ignoreNextClick = true;
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
-
-            // Empêche la création d'un autre div lorsque l'utilisateur relâche la souris
-
         };
-
-        // Ajout des événements de déplacement et de relâchement
+    
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     }
+    
 }
