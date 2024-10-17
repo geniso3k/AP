@@ -1,9 +1,5 @@
-// index.js
 
-// Variable globale pour gérer l'état du redimensionnement
-var isResizing = false;
 var ignoreNextClick = false; // Nouveau flag pour ignorer le clic après le redimensionnement
-
 // Sélectionne toutes les colonnes avec la classe "day-column"
 let dayColumns = document.getElementsByClassName("day-column");
 
@@ -13,11 +9,6 @@ Array.from(dayColumns).forEach(column => {
             // Ignore le prochain clic après le redimensionnement
             ignoreNextClick = false; // Réinitialise après avoir ignoré ce clic
             event.preventDefault();
-            return;
-        }
-
-        if (isResizing) {
-            event.preventDefault(); // Empêche la création d'un div pendant le redimensionnement
             return;
         }
 

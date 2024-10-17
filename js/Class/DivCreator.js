@@ -88,11 +88,11 @@ class DivCreator {
         let initialHeight = this.div.offsetHeight;
         const containerHeight = this.column.offsetHeight;
 
-        isResizing = true; // Le redimensionnement commence (variable globale)
+        document.onselectstart = (e) => { e.preventDefault() }
+        
 
         // Empêche la création d'un autre div ou d'autres comportements de la souris
-        down.stopPropagation();
-        down.preventDefault();
+
 
         // Fonction appelée pendant le déplacement de la souris
         const onMouseMove = (position) => {
@@ -139,15 +139,14 @@ class DivCreator {
             }
         };
 
-        const onMouseUp = (up) => {
-            isResizing = false; // Le redimensionnement est terminé
+        const onMouseUp = () => {
+
             ignoreNextClick = true; // Ignore le prochain clic (empêche la création d'un div)
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
 
             // Empêche la création d'un autre div lorsque l'utilisateur relâche la souris
-            up.preventDefault();
-            up.stopPropagation();
+
         };
 
         // Ajout des événements de déplacement et de relâchement
