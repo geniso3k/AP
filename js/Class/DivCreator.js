@@ -1,126 +1,107 @@
 class DivCreator {
     constructor(column, X, Y) {
-        this.column = column; // La colonne où le div sera ajouté
-        this.X = X; // Position X (coordonnée de la souris)
-        this.Y = Y; // Position Y (coordonnée de la souris)
-        this.div = null; // Référence au div créé
-        this.isResizing = false; // Pour gérer le redimensionnement
-        this.createDiv(); // Méthode pour créer le div
+        this.column = column; 
+        this.X = X; 
+        this.Y = Y; 
+        this.div = null; 
+        this.isResizing = false; 
+        this.createDiv(); 
     }
 
-    // Méthode de création du div
     createDiv() {
-        this.div = document.createElement("div"); // Création du div
-        this.div.innerHTML = "Je suis là"; // Contenu du div
-        this.div.classList.add("event-slot"); // Ajout de la classe
+        this.div = document.createElement("div"); 
+        this.div.innerHTML = "Je suis là"; 
+        this.div.classList.add("event-slot");
 
-        let sousDiv = document.createElement("div"); // Sous-div
+        let sousDiv = document.createElement("div");
         sousDiv.innerHTML = "Dans la div";
         sousDiv.classList.add("sousDiv");
 
-        const rect = this.column.getBoundingClientRect(); // Position de la colonne
+        const rect = this.column.getBoundingClientRect();
 
-        // Positionne le div relativement à la colonne
-        this.div.style.backgroundColor = this.generateRandomColor(); // Couleur aléatoire
+        this.div.style.backgroundColor = this.generateRandomColor();
         this.div.style.width = "100%";
         this.div.style.position = "absolute"; 
-        this.div.style.top = `${this.Y - rect.top}px`; // Ajuste la position en fonction du clic
-        this.div.style.minHeight = "35px"; // Hauteur minimale pour éviter un div trop petit
-
-        // Ajoute le div à la colonne et le sous-div au div
+        this.div.style.top = `${this.Y - rect.top}px`;
+        this.div.style.minHeight = "35px"; 
+        
         this.column.appendChild(this.div);
         this.div.appendChild(sousDiv);
 
-        // Ajoute les événements spécifiques au div
         this.addDivEvents();
     }
 
-    // Génère une couleur aléatoire
     generateRandomColor() {
         let rndm = Math.floor(Math.random() * 999999) + 100000;
         return "#" + rndm;
     }
 
-    // Méthode pour ajouter les événements (clic droit pour supprimer, redimensionnement)
     addDivEvents() {
-        // Suppression via clic droit
         this.div.addEventListener("contextmenu", (event) => {
-            this.div.remove(); // Supprime le div
+            this.div.remove(); 
             event.preventDefault();
             return false;
         });
 
-        // Redimensionnement via mousedown
         this.div.addEventListener("mousedown", (down) => {
             this.handleMouseDown(down);
         });
 
-        // Empêche le clic pendant le redimensionnement
         this.div.addEventListener("click", (event) => {
             if (this.isResizing) {
-                event.preventDefault(); // Annule l'événement click si redimensionnement
-                this.isResizing = false; // Réinitialise après relâchement de la souris
+                event.preventDefault(); 
+                this.isResizing = false;
             }
         });
     }
 
-    // Méthode pour gérer le redimensionnement du div
     handleMouseDown(down) {
-        let initialY = down.clientY; // Position initiale de la souris
-        let initialTop = this.div.offsetTop; // Position initiale du div
-        let initialHeight = this.div.offsetHeight; // Hauteur initiale du div
+        let initialY = down.clientY; 
+        let initialTop = this.div.offsetTop; 
+        let initialHeight = this.div.offsetHeight; 
+        const containerHeight = this.column.offsetHeight; // Hauteur du conteneur parent
         this.isResizing = false;
 
         down.stopPropagation();
 
-        // Fonction appelée pendant le déplacement de la souris
         const onMouseMove = (position) => {
             this.isResizing = true;
-            let currentY = position.clientY; // Position actuelle de la souris
+            let currentY = position.clientY;
 
-            // Vérifie si on redimensionne vers le bas ou le haut
             if (currentY > initialY) {
                 // Redimension vers le bas
                 let newHeight = initialHeight + (currentY - initialY);
+                // Vérifie que la hauteur ne dépasse pas la hauteur du conteneur
+                if (newHeight + initialTop > containerHeight) {
+                    newHeight = containerHeight - initialTop;
+                }
                 this.div.style.height = `${newHeight}px`;
-                console.log("Redimension vers le bas");
-                let tab = {
-                    "height" : this.div.style.height,
-                    "top" : this.div.style.top,
-                    "newHeight" : newHeight,
-                    "currentY" : currentY,
-                    "initialY" : initialY
-                };
-                console.log(tab);
+
             } else {
                 // Redimension vers le haut
-                let newTop = initialTop - (initialHeight + (initialY - currentY) - initialHeight);
-                if (newTop < 0) newTop = 0; // Empêche de sortir de la zone supérieure
-                if(currentY < 129) currentY = 129;
-                
+                let newTop = initialTop - (initialY - currentY);
+                // Limiter la position du haut à 0 (pour ne pas sortir du conteneur)
+                if (newTop < 0) {
+                    newTop = 0;
+                }
+                let newHeight = initialHeight + (initialTop - newTop);
 
-                this.div.style.top = `${newTop}px`; // Ajuste le top pour bouger vers le haut
-                this.div.style.height = initialY - currentY + 35 + "px";
-                let tab = {
-                    "height" : this.div.style.height,
-                    "top" : this.div.style.top,
-                    "newTop" : newTop,
-                    "currentY" : currentY,
-                    "initialY" : initialY
-                };
-                
-                console.log(tab);
-                console.log("Redimension vers le haut");
+                // Limite pour la hauteur minimale
+                if (newHeight < 35) {
+                    newHeight = 35;
+                    newTop = initialTop + (initialHeight - newHeight);
+                }
+
+                this.div.style.top = `${newTop}px`; 
+                this.div.style.height = `${newHeight}px`;
             }
         };
 
-        // Arrête le redimensionnement quand la souris est relâchée
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
         };
 
-        // Ajoute les événements de déplacement et de relâchement
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     }
