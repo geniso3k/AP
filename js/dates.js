@@ -1,66 +1,60 @@
-// dateManagement.js
+// date.js
 
-let lundiCourant = new Date();
-lundiCourant.setHours(0, 0, 0, 0); // Réinitialiser l'heure
-const day = lundiCourant.getDay();
-const diff = (day <= 0 ? -6 : 1) - day; // Calculer la différence pour obtenir le lundi
-lundiCourant.setDate(lundiCourant.getDate() + diff);
-
-let retourneJour = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-let retourneMois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
-
-function afficheCalendrier(date, shadowRoot) {
+function afficheCalendrier(date, planningElement) {
     let d = new Date(date);
-    let lesDates = shadowRoot.querySelectorAll(".day-header");
-    let dayColumns = shadowRoot.querySelectorAll(".day-column");
-    let cWeek = shadowRoot.querySelector("#current-week");
-    let premier;
-    let dernier;
+    let lesDates = planningElement.shadowRoot.querySelectorAll(".day-header");
+    let colonnesJours = planningElement.shadowRoot.querySelectorAll(".day-column");
+    let cWeek = planningElement.shadowRoot.querySelector("#current-week");
+    let premierJour;
+    let dernierJour;
 
     for (let i = 0; i < lesDates.length; i++) {
         let uneDate = lesDates[i];
-        let dayColumn = dayColumns[i];
-        let dayName = retourneJour[d.getDay()];
+        let colonneJour = colonnesJours[i];
+        let nomJour = planningElement.listeJours[d.getDay()];
         if (i === 0) {
-            premier = d.getDate();
+            premierJour = d.getDate();
         }
         if (i === lesDates.length - 1) {
-            dernier = d.getDate();
+            dernierJour = d.getDate();
         }
-        uneDate.innerHTML = "<b>" + dayName + " " + d.getDate() + "</b>";
+        uneDate.innerHTML = "<b>" + nomJour + " " + d.getDate() + "</b>";
 
-        // Mettre à jour l'attribut data-date de la colonne du jour
         const dateString = d.toISOString().split('T')[0];
-        dayColumn.dataset.date = dateString;
+        colonneJour.dataset.date = dateString;
 
         d.setDate(d.getDate() + 1);
     }
-    cWeek.innerHTML = "Semaine du " + premier + " au " + dernier + " " + retourneMois[d.getMonth()] + " " + d.getFullYear();
+    cWeek.innerHTML = "Semaine du " + premierJour + " au " + dernierJour + " " + planningElement.listeMois[planningElement.lundiCourant.getMonth()] + " " + planningElement.lundiCourant.getFullYear();
 
-    // Recharger les événements pour la nouvelle semaine
-    const planningElement = document.querySelector('planning-calendrier');
-    if (planningElement) {
-        planningElement.lundiCourant = new Date(date);
-        planningElement.loadEventsFromStorage();
-    }
+    planningElement.chargerEvenementsDepuisStockage();
 }
 
 function reculeSemaine(planningElement) {
     planningElement.lundiCourant.setDate(planningElement.lundiCourant.getDate() - 7);
-    afficheCalendrier(planningElement.lundiCourant, planningElement.shadowRoot);
+    afficheCalendrier(planningElement.lundiCourant, planningElement);
 }
 
 function avanceSemaine(planningElement) {
     planningElement.lundiCourant.setDate(planningElement.lundiCourant.getDate() + 7);
-    afficheCalendrier(planningElement.lundiCourant, planningElement.shadowRoot);
+    afficheCalendrier(planningElement.lundiCourant, planningElement);
 }
 
-// Initialisation du planning au chargement de la page
 window.onload = function() {
     customElements.whenDefined('planning-calendrier').then(() => {
         const planningElement = document.querySelector('planning-calendrier');
         if (planningElement) {
-            afficheCalendrier(planningElement.lundiCourant, planningElement.shadowRoot);
+            planningElement.listeJours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+            planningElement.listeMois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+            afficheCalendrier(planningElement.lundiCourant, planningElement);
+
+            planningElement.shadowRoot.getElementById('prev-week').addEventListener('click', () => {
+                reculeSemaine(planningElement);
+            });
+            planningElement.shadowRoot.getElementById('next-week').addEventListener('click', () => {
+                avanceSemaine(planningElement);
+            });
         } else {
             console.error("Le planning-calendrier n'est pas disponible !");
         }

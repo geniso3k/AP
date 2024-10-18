@@ -1,19 +1,21 @@
+// Planning.js
+
 class Planning extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.timeColumnHeight = 0;
+        this.hauteurColonneTemps = 0;
 
         // Initialiser lundiCourant au lundi de la semaine actuelle
         this.lundiCourant = new Date();
         this.lundiCourant.setHours(0, 0, 0, 0); // Réinitialiser l'heure
-        const day = this.lundiCourant.getDay();
-        const diff = (day <= 0 ? -6 : 1) - day; // Calculer la différence pour obtenir le lundi
+        const jour = this.lundiCourant.getDay();
+        const diff = (jour <= 0 ? -6 : 1) - jour; // Calculer la différence pour obtenir le lundi
         this.lundiCourant.setDate(this.lundiCourant.getDate() + diff);
 
         // Tableaux pour les noms de jours et de mois
-        this.retourneJour = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-        this.retourneMois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+        this.listeJours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+        this.listeMois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
     }
 
     connectedCallback() {
@@ -25,54 +27,53 @@ class Planning extends HTMLElement {
 
             // Obtenir la hauteur totale de la colonne horaire
             const timeSlot = this.shadowRoot.querySelector('.time-slot');
-            const timeSlotHeight = timeSlot.offsetHeight;
-            const numberOfTimeSlots = 24;
-            this.timeColumnHeight = timeSlotHeight * numberOfTimeSlots;
+            const hauteurTimeSlot = timeSlot.offsetHeight;
+            const nombreTimeSlots = 24;
+            this.hauteurColonneTemps = hauteurTimeSlot * nombreTimeSlots;
 
             // Synchroniser le défilement horizontal
             this.synchroniserDefilement();
 
-            // Charger les événements sauvegardés
-            this.loadEventsFromStorage();
+            // Afficher le calendrier initial
+            this.afficheCalendrier(this.lundiCourant);
         }, 0);
     }
 
-    loadEventsFromStorage() {
-        let events = JSON.parse(localStorage.getItem('events')) || [];
+    chargerEvenementsDepuisStockage() {
+        let evenements = JSON.parse(localStorage.getItem('evenements')) || [];
 
         // Obtenir les dates de début et de fin de la semaine courante
-        const weekStartDate = new Date(this.lundiCourant);
-        const weekEndDate = new Date(this.lundiCourant);
-        weekEndDate.setDate(weekEndDate.getDate() + 6); // Dimanche
+        const dateDebutSemaine = new Date(this.lundiCourant);
+        const dateFinSemaine = new Date(this.lundiCourant);
+        dateFinSemaine.setDate(dateFinSemaine.getDate() + 6); // Dimanche
 
         // Filtrer les événements pour la semaine courante
-        events = events.filter(event => {
-            const eventDate = new Date(event.date);
-            return eventDate >= weekStartDate && eventDate <= weekEndDate;
+        evenements = evenements.filter(evenement => {
+            const dateEvenement = new Date(evenement.date);
+            return dateEvenement >= dateDebutSemaine && dateEvenement <= dateFinSemaine;
         });
 
         // Supprimer les événements actuels du planning
-        this.clearEvents();
+        this.effacerEvenements();
 
         // Charger les événements filtrés
-        events.forEach(eventData => {
-            const column = this.shadowRoot.querySelector(`.day-column[data-date="${eventData.date}"]`);
-            if (column) {
-                // Créer une nouvelle instance de DivCreator avec eventData
-                const divCreator = new DivCreator(
-                    column,
-                    0, // X (non utilisé avec eventData)
-                    0, // Y (non utilisé avec eventData)
+        evenements.forEach(donneesEvenement => {
+            const colonne = this.shadowRoot.querySelector(`.day-column[data-date="${donneesEvenement.date}"]`);
+            if (colonne) {
+                new Evenement(
+                    colonne,
+                    0, // X (non utilisé avec donneesEvenement)
+                    0, // Y (non utilisé avec donneesEvenement)
                     this.shadowRoot,
-                    this.timeColumnHeight,
+                    this.hauteurColonneTemps,
                     false,     // Ne pas sauvegarder à nouveau
-                    eventData  // Passer eventData pour éviter l'appel à changerMotif()
+                    donneesEvenement  // Passer donneesEvenement pour éviter l'appel à changerMotif()
                 );
             }
         });
     }
 
-    clearEvents() {
+    effacerEvenements() {
         const eventSlots = this.shadowRoot.querySelectorAll('.event-slot');
         eventSlots.forEach(eventSlot => eventSlot.remove());
     }
@@ -121,15 +122,15 @@ class Planning extends HTMLElement {
                             <div class="planning-body">
                                 <div class="time-column">
                                     <!-- Création des créneaux horaires -->
-                                    ${this.createTimeSlots()}
+                                    ${this.creerTimeSlots()}
                                 </div>
-                                <div class="day-column" id="monday"></div>
-                                <div class="day-column" id="tuesday"></div>
-                                <div class="day-column" id="wednesday"></div>
-                                <div class="day-column" id="thursday"></div>
-                                <div class="day-column" id="friday"></div>
-                                <div class="day-column" id="saturday"></div>
-                                <div class="day-column" id="sunday"></div>
+                                <div class="day-column" id="lundi"></div>
+                                <div class="day-column" id="mardi"></div>
+                                <div class="day-column" id="mercredi"></div>
+                                <div class="day-column" id="jeudi"></div>
+                                <div class="day-column" id="vendredi"></div>
+                                <div class="day-column" id="samedi"></div>
+                                <div class="day-column" id="dimanche"></div>
                             </div>
                         </div>
                     </div>
@@ -138,21 +139,21 @@ class Planning extends HTMLElement {
         `;
 
         // Ajouter les attributs data-date aux colonnes des jours
-        this.updateDayColumnsDates();
+        this.mettreAJourDatesColonnes();
     }
 
-    updateDayColumnsDates() {
-        const dayColumns = this.shadowRoot.querySelectorAll(".day-column");
+    mettreAJourDatesColonnes() {
+        const colonnesJours = this.shadowRoot.querySelectorAll(".day-column");
         let date = new Date(this.lundiCourant);
 
-        dayColumns.forEach(column => {
+        colonnesJours.forEach(colonne => {
             const dateString = date.toISOString().split('T')[0]; // Format YYYY-MM-DD
-            column.dataset.date = dateString;
+            colonne.dataset.date = dateString;
             date.setDate(date.getDate() + 1);
         });
     }
 
-    createTimeSlots() {
+    creerTimeSlots() {
         let timeSlots = '';
         for (let i = 0; i < 24; i++) {
             timeSlots += `<div class="time-slot">${i.toString().padStart(2, '0')}:00</div>`;
@@ -169,10 +170,7 @@ class Planning extends HTMLElement {
 
         // Ajouter un écouteur pour le bouton de réinitialisation
         const resetButton = this.shadowRoot.querySelector('#reset-planning');
-        resetButton.addEventListener('click', () => this.resetPlanning());
-
-        // Initialiser les dates dans les en-têtes
-        this.afficheCalendrier(this.lundiCourant);
+        resetButton.addEventListener('click', () => this.reinitialiserPlanning());
 
         // Ajouter les événements pour les boutons de navigation
         this.shadowRoot.getElementById('prev-week').addEventListener('click', () => {
@@ -183,34 +181,30 @@ class Planning extends HTMLElement {
         });
     }
 
-    resetPlanning() {
+    reinitialiserPlanning() {
         // Effacer le Local Storage
-        localStorage.removeItem('events');
+        localStorage.removeItem('evenements');
 
         // Supprimer tous les événements du planning
         const eventSlots = this.shadowRoot.querySelectorAll('.event-slot');
         eventSlots.forEach(eventSlot => eventSlot.remove());
     }
 
-    // Méthode pour gérer le clic et créer des divs dynamiques
     initialiserClicDiv() {
         const shadowRoot = this.shadowRoot;
+        let colonnesJours = shadowRoot.querySelectorAll(".day-column");
 
-        // Sélectionne toutes les colonnes avec la classe "day-column" dans le shadowRoot
-        let dayColumns = shadowRoot.querySelectorAll(".day-column");
-
-        Array.from(dayColumns).forEach(column => {
-            let ignoreNextClick = false; // Flag pour ignorer le clic après le redimensionnement
+        Array.from(colonnesJours).forEach(colonne => {
+            let ignorerProchainClic = false;
 
             // Écoute l'événement personnalisé pour ignorer le prochain clic
-            column.addEventListener('ignoreNextClick', (event) => {
-                ignoreNextClick = true;
+            colonne.addEventListener('ignoreNextClick', (event) => {
+                ignorerProchainClic = true;
             });
 
-            column.addEventListener("click", (event) => {
-                if (ignoreNextClick) {
-                    // Ignore le prochain clic après le redimensionnement
-                    ignoreNextClick = false; // Réinitialise après avoir ignoré ce clic
+            colonne.addEventListener("click", (event) => {
+                if (ignorerProchainClic) {
+                    ignorerProchainClic = false; // Réinitialise après avoir ignoré ce clic
                     event.preventDefault();
                     return;
                 }
@@ -219,55 +213,49 @@ class Planning extends HTMLElement {
                 let mouseY = event.clientY; // Coordonnée Y de la souris (par rapport à la fenêtre)
 
                 // Calcule la position Y relative à la colonne pour bien placer l'élément
-                const columnRect = column.getBoundingClientRect();
-                const relativeMouseY = mouseY - columnRect.top;
+                const rectColonne = colonne.getBoundingClientRect();
+                const relativeMouseY = mouseY - rectColonne.top;
 
-                // Crée une nouvelle instance de DivCreator pour créer et gérer un div
-                new DivCreator(column, mouseX, relativeMouseY, shadowRoot, this.timeColumnHeight);
+                new Evenement(colonne, mouseX, relativeMouseY, shadowRoot, this.hauteurColonneTemps);
             });
         });
     }
 
-    // Méthode pour afficher le calendrier avec les dates
     afficheCalendrier(date) {
         let d = new Date(date);
         let lesDates = this.shadowRoot.querySelectorAll(".day-header");
-        let dayColumns = this.shadowRoot.querySelectorAll(".day-column");
+        let colonnesJours = this.shadowRoot.querySelectorAll(".day-column");
         let cWeek = this.shadowRoot.querySelector("#current-week");
-        let premier;
-        let dernier;
+        let premierJour;
+        let dernierJour;
 
         for (let i = 0; i < lesDates.length; i++) {
             let uneDate = lesDates[i];
-            let dayColumn = dayColumns[i];
-            let dayName = this.retourneJour[d.getDay()];
+            let colonneJour = colonnesJours[i];
+            let nomJour = this.listeJours[d.getDay()];
             if (i === 0) {
-                premier = d.getDate();
+                premierJour = d.getDate();
             }
             if (i === lesDates.length - 1) {
-                dernier = d.getDate();
+                dernierJour = d.getDate();
             }
-            uneDate.innerHTML = "<b>" + dayName + " " + d.getDate() + "</b>";
+            uneDate.innerHTML = "<b>" + nomJour + " " + d.getDate() + "</b>";
 
-            // Mettre à jour l'attribut data-date de la colonne du jour
             const dateString = d.toISOString().split('T')[0];
-            dayColumn.dataset.date = dateString;
+            colonneJour.dataset.date = dateString;
 
             d.setDate(d.getDate() + 1);
         }
-        cWeek.innerHTML = "Semaine du " + premier + " au " + dernier + " " + this.retourneMois[d.getMonth()] + " " + d.getFullYear();
+        cWeek.innerHTML = "Semaine du " + premierJour + " au " + dernierJour + " " + this.listeMois[this.lundiCourant.getMonth()] + " " + this.lundiCourant.getFullYear();
 
-        // Recharger les événements pour la nouvelle semaine
-        this.loadEventsFromStorage();
+        this.chargerEvenementsDepuisStockage();
     }
 
-    // Méthode pour reculer d'une semaine
     reculeSemaine() {
         this.lundiCourant.setDate(this.lundiCourant.getDate() - 7);
         this.afficheCalendrier(this.lundiCourant);
     }
 
-    // Méthode pour avancer d'une semaine
     avanceSemaine() {
         this.lundiCourant.setDate(this.lundiCourant.getDate() + 7);
         this.afficheCalendrier(this.lundiCourant);
