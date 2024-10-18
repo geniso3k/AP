@@ -71,7 +71,7 @@ class DivCreator {
         // Calcule l'heure de début et de fin
         this.objDiv = new Heure(this.timeColumnHeight, this.div.offsetTop, this.div.offsetHeight);
 
-        this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight() + "</b>";
+        this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight() + "</b><br>Motif :";
         this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure() + "</b>";
 
         // Sauvegarder l'événement uniquement si shouldSave est vrai
@@ -235,7 +235,7 @@ class DivCreator {
             // Met à jour les heures de début et de fin après redimensionnement
             this.objDiv.redefinirTop(this.div.offsetTop);
             this.objDiv.redefinirHeight(this.div.offsetHeight);
-            this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight() + "</b>";
+            this.topText.innerHTML = "Début : <b>" + this.objDiv.calculTop() + "</b> - Fin : <b>" + this.objDiv.calculHeight() + "</b><br>Motif :";
             this.sousDiv.innerHTML = "Durée : <b>" + this.objDiv.totalHeure() + "</b>";
         };
 
