@@ -58,26 +58,16 @@ class Planning extends HTMLElement {
         events.forEach(eventData => {
             const column = this.shadowRoot.querySelector(`.day-column[data-date="${eventData.date}"]`);
             if (column) {
+                // Créer une nouvelle instance de DivCreator avec eventData
                 const divCreator = new DivCreator(
                     column,
-                    0,
-                    parseInt(eventData.top),
+                    0, // X (non utilisé avec eventData)
+                    0, // Y (non utilisé avec eventData)
                     this.shadowRoot,
                     this.timeColumnHeight,
-                    false // Ne pas sauvegarder à nouveau
+                    false,     // Ne pas sauvegarder à nouveau
+                    eventData  // Passer eventData pour éviter l'appel à changerMotif()
                 );
-
-                // Appliquer les styles sauvegardés
-                divCreator.div.style.top = eventData.top;
-                divCreator.div.style.height = eventData.height;
-                divCreator.div.style.backgroundColor = eventData.color;
-                divCreator.div.dataset.eventId = eventData.id;
-
-                // Recalculer les heures de début et de fin
-                divCreator.objDiv.redefinirTop(parseInt(eventData.top));
-                divCreator.objDiv.redefinirHeight(parseInt(eventData.height));
-                divCreator.topText.innerHTML = "Début : <b>" + divCreator.objDiv.calculTop() + "</b> - Fin : <b>" + divCreator.objDiv.calculHeight() + "</b>";
-                divCreator.sousDiv.innerHTML = "Durée : <b>" + divCreator.objDiv.totalHeure() + "</b>";
             }
         });
     }
