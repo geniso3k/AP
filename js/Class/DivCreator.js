@@ -41,6 +41,7 @@ class DivCreator {
         resizeHandleTop.style.height = "10px";
         resizeHandleTop.style.cursor = "n-resize";
 
+
         let resizeHandleBottom = document.createElement("div");
         resizeHandleBottom.classList.add("resize-handle", "bottom-handle");
         resizeHandleBottom.style.position = "absolute";
@@ -49,18 +50,21 @@ class DivCreator {
         resizeHandleBottom.style.height = "10px";
         resizeHandleBottom.style.cursor = "s-resize";
 
+
         // Création de topText
         this.topText = document.createElement("div");
         this.topText.classList.add("top-text");
 
         // Ajout des éléments au div principal
+        
+        this.column.appendChild(this.div);
         this.div.appendChild(this.topText);
         this.div.appendChild(resizeHandleTop);
         this.div.appendChild(resizeHandleBottom);
         this.div.appendChild(this.sousDiv);
-        this.column.appendChild(this.div);
 
-        this.addDivEvents(resizeHandleTop, resizeHandleBottom);
+
+        this.addDivEvents(resizeHandleTop, resizeHandleBottom, this.topText);
         this.topText.innerHTML = "Début : Chargement %";
         this.sousDiv.innerHTML = "Durée : ...";
 
@@ -136,7 +140,7 @@ class DivCreator {
         return "#" + rndm;
     }
 
-    addDivEvents(resizeHandleTop, resizeHandleBottom) {
+    addDivEvents(resizeHandleTop, resizeHandleBottom, topText) {
         // Clic droit pour supprimer le div
         this.div.addEventListener("contextmenu", (event) => {
             this.div.remove();
@@ -156,6 +160,13 @@ class DivCreator {
         resizeHandleBottom.addEventListener("mousedown", (down) => {
             this.resizingFrom = "bottom";
             this.handleMouseDown(down);
+        });
+
+        this.div.addEventListener("mousedown", (down) => {
+            if(!down.target.classList.contains("resize-handle")){
+                this.resizingFrom = "center";
+                this.handleMouseDown(down);
+            }
         });
     }
 
@@ -211,6 +222,14 @@ class DivCreator {
                     this.div.style.top = `${initialTop + direction}px`;
                     this.div.style.height = `${newHeight}px`;
                 }
+            }
+            if(this.resizingFrom == "center"){
+                let newTop = initialTop + direction;
+                if (newTop < 0) {
+                    newTop = 0;
+                }
+                this.div.style.top = `${newTop}px`;
+
             }
 
             // Met à jour les heures de début et de fin après redimensionnement
