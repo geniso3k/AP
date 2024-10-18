@@ -88,9 +88,13 @@ class Planning extends HTMLElement {
     }
 
     render() {
+        let maxHeight = "200px";
         this.shadowRoot.innerHTML = `
             <style>
                 @import url('styles.css');
+                .planning-body-container{
+                    height: ${maxHeight}
+                }
             </style>
             <div class="planning-container">
                 <!-- Navigation -->
@@ -121,7 +125,7 @@ class Planning extends HTMLElement {
                         <div class="planning-body-container">
                             <div class="planning-body">
                                 <div class="time-column">
-                                    <!-- Création des créneaux horaires -->
+                                    
                                     ${this.creerTimeSlots()}
                                 </div>
                                 <div class="day-column" id="lundi"></div>
