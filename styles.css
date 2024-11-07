@@ -96,13 +96,8 @@ body {
 }
 
 
-.allDay-column {
-    display: grid;
-    position:relative;
-}
 
 .day-column {
-    background-color: red;
     border-left: 1px solid #ddd;
     position: relative;
     display: grid;

@@ -1,41 +1,56 @@
 
 
 // Sélectionne tous les éléments avec la classe "day-column"
-let dayColumns = document.getElementsByClassName("day-column");
-let allColumn = document.getElementById("allDay-column");
+let planningBody = document.querySelector(".planning-body");
 
-// Ajoute un écouteur d'événements pour chaque colonne de jour
-Array.from(dayColumns).forEach((column, index) => {
 
-    column.addEventListener("mousedown", function(down) {
-        console.log("Clic simple");
-        let posDepartX = down.offsetX;
-        let posDepartY = down.offsetY;
-        let idJourDebut = column.id;
-        console.log(idJourDebut + " / depart / "+posDepartX);
+    planningBody.addEventListener("mousedown", function(down) {
+
+        let startY = down.offsetY;
+        // Utilise `elementFromPoint` pour détecter la colonne sous la souris
+        let elementSousLaSouris = document.elementFromPoint(down.clientX, down.clientY);
+
+         // Création de l'événement en utilisant la classe Evenement
+        divCrea = new Evenement(startY, elementSousLaSouris);   
+
+        console.log("Debut : "+startY);
+
         // Fonction pour gérer le mouvement de la souris uniquement dans la colonne
         function onMouseMove(pos) {
-            let relativeY = pos.offsetY;  // Position Y relative à la colonne
-            let relativeX = pos.offsetX;  // Position X relative à la colonne
+
+            let relativeY = pos.offsetY;  // Position Y relative à la colonne haut en bas
+
+            let newHeight = Math.abs(relativeY-startY);
             
-            //console.log("Position relative dans la colonne - Gauche-droite X:", relativeX, "Bas Y:", relativeY);
-        }
-        function onMouseLeave(pos){
+            divCrea.setHeight(newHeight);
 
-            let posFinX = pos.offsetX;
-            let posFinY = pos.offsetY;
-            let idJourFin = column.id;
-            console.log(idJourFin + "/ Fin / "+posFinX);
-
-            column.removeEventListener("mousemove", onMouseMove);
-            document.removeEventListener("mouseup", onMouseLeave);
         }
 
+        function onMouseFinish(up){
 
-        column.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseLeave);
+            // Capture les positions de fin relatives à planning-body
+            endX = up.offsetX;
+            endY = up.offsetY;
+
+            
+
+            // Vérifie si l'élément sous la souris est bien une `day-column`
+            if (elementSousLaSouris && elementSousLaSouris.classList.contains("day-column")) {
+                console.log("Colonne détectée :", elementSousLaSouris.id + " Y : "+endY);
+            }
+
+           
+
+            planningBody.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseFinish);
+        }
+
+
+        planningBody.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseFinish); 
+        document.addEventListener("mouseleave", onMouseFinish);
     });
-});
+
 
 /*
 
