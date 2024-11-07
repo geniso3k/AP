@@ -139,8 +139,9 @@ body {
     flex-direction: column;
     width: calc(100% - 2px); /* Pour tenir compte des bordures */
     min-height: 40px;
-    border-top: 2px solid #ccc;
+    border-right: 2px solid #ccc;
     border-bottom: 2px solid #ccc;
+    overflow: hidden;
 }
 
 .event-slot:hover {
@@ -153,11 +154,56 @@ body {
 
 .top-handle {
     cursor: n-resize;
+    background-color:black;
+    position:absolute;
+    width: 10px !important;
+    left: 45%;
+    border-radius: 50%;
+    top: -5px !important;
 }
 
 .bottom-handle {
     cursor: s-resize;
+    background-color:black;
+    position:absolute;
+    width: 10px !important;
+    left: 45%;
+    border-radius: 50%;
+    bottom: -5px !important;
 }
+
+/* Animations pour les boutons handle */
+@keyframes appearAnimation {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  .event-slot .top-handle, .event-slot .bottom-handle {
+    position: absolute;
+    width: 20px !important;
+    left: 45%;
+    border-radius: 50%;
+    background-color: black;
+    opacity: 0;
+    transform: scale(0);
+    transition: transform 0.2s ease-out, opacity 0.5s ease-out;
+  }
+  
+  .event-slot:hover .top-handle, .event-slot:hover .bottom-handle {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .event-slot .top-handle {
+    cursor: n-resize;
+    top: -5px !important;
+  }
+  
+  .event-slot .bottom-handle {
+    cursor: s-resize;
+    bottom: -5px !important;
+  }
+/* fin animation */  
 
 .top-text, .sousDiv {
     padding: 2px;
