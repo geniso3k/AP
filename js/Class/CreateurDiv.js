@@ -92,6 +92,18 @@ class CreateurDiv {
         let rndm = Math.floor(Math.random() * 999999) + 100000;
         return "#" + rndm;
     }
+    chevauche(creneauA, creneauB){
+
+        const HauteurA = creneauA.offsetTop;
+        const LargeurA = HauteurA + creneauA.offsetHeight;
+        const HauteurB = creneauB.offsetTop;
+        const LargeurB = HauteurB + creneauB.offsetHeight;
+
+        // Un chevauchement existe si le bas de A est plus grand que le haut de B
+    // et si le haut de A est plus petit que le bas de B
+        return !(LargeurA <= HauteurB || HauteurA >= LargeurB);
+
+    }
 
     gererMouseDown(down) {
         let initialY = down.clientY;
@@ -126,10 +138,53 @@ class CreateurDiv {
                 this.div.style.top = `${nouveauTop}px`;
             }
 
+             // Vérifier les chevauchements avec les autres créneaux dans la colonne
+            const tousLesCreaneaux = Array.from(this.colonne.querySelectorAll('.event-slot'));
+            const chevauchants = tousLesCreaneaux.filter(creaneau => creaneau !== this.div && this.chevauche(this.div, creaneau));  
+
+            if(chevauchants.length > 0){
+
+                let nouvelleLargeur = 100/ (chevauchants.length + 1) + "%";
+                chevauchants.forEach((creaneau, index) => {
+
+
+                    creaneau.style.width = nouvelleLargeur;
+                    if (index % 2 === 0) {//Alterner entre left et right
+                        creaneau.style.left = '0';
+                        creaneau.style.right = 'auto';
+                    } else {
+                        creaneau.style.right = '0';
+                        creaneau.style.left = 'auto';
+                    }
+
+
+                });
+                this.div.style.width = nouvelleLargeur;
+                if (chevauchants.length % 2 === 0) {
+                    this.div.style.left = '0';
+                    this.div.style.right = 'auto';
+                } else {
+                    this.div.style.right = '0';
+                    this.div.style.left = 'auto';
+                }
+
+            }else{
+                        // Si aucun chevauchement, remettre à 100%
+            tousLesCreaneaux.forEach(creaneau => {
+                creaneau.style.width = '100%';
+                creaneau.style.left = '0';
+                creaneau.style.right = 'auto';
+            });
+            }
+
             // Mettre à jour les heures
             this.objDiv.redefinirTop(this.div.offsetTop);
             this.objDiv.redefinirHeight(this.div.offsetHeight);
             this.mettreAJourTopText();
+
+
+
+
         };
 
         const onMouseUp = () => {

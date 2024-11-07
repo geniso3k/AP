@@ -44,6 +44,8 @@ class Evenement extends CreateurDiv {
         }
     }
 
+
+
     // Sauvegarder l'événement dans le stockage local
     sauvegarderEvenement() {
         const dateString = this.colonne.dataset.date;
