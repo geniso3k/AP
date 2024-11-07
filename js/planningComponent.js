@@ -10,7 +10,7 @@ class Planning extends HTMLElement {
         this.lundiCourant = new Date();
         this.lundiCourant.setHours(0, 0, 0, 0); // Réinitialiser l'heure
         const jour = this.lundiCourant.getDay();
-        const diff = (jour <= 0 ? -6 : 1) - jour; // Calculer la différence pour obtenir le lundi
+        const diff = (jour === 0 ? -6 : 1 - jour); // Ajustement pour que dimanche ramène bien au lundi de la semaine
         this.lundiCourant.setDate(this.lundiCourant.getDate() + diff);
 
         // Tableaux pour les noms de jours et de mois
@@ -42,21 +42,12 @@ class Planning extends HTMLElement {
     chargerEvenementsDepuisStockage() {
         let evenements = JSON.parse(localStorage.getItem('evenements')) || [];
 
-        // Obtenir les dates de début et de fin de la semaine courante
-        const dateDebutSemaine = new Date(this.lundiCourant);
-        const dateFinSemaine = new Date(this.lundiCourant);
-        dateFinSemaine.setDate(dateFinSemaine.getDate() + 6); // Dimanche
-
-        // Filtrer les événements pour la semaine courante
-        evenements = evenements.filter(evenement => {
-            const dateEvenement = new Date(evenement.date);
-            return dateEvenement >= dateDebutSemaine && dateEvenement <= dateFinSemaine;
-        });
+        console.log("Tous les événements dans localStorage :", evenements);
 
         // Supprimer les événements actuels du planning
         this.effacerEvenements();
 
-        // Charger les événements filtrés
+        // Charger tous les événements disponibles dans le stockage, sans filtrage
         evenements.forEach(donneesEvenement => {
             const colonne = this.shadowRoot.querySelector(`.day-column[data-date="${donneesEvenement.date}"]`);
             if (colonne) {
@@ -88,7 +79,7 @@ class Planning extends HTMLElement {
     }
 
     render() {
-        let maxHeight = "200px";
+        let maxHeight = "800px";
         this.shadowRoot.innerHTML = `
             <style>
                 @import url('styles.css');
@@ -125,7 +116,6 @@ class Planning extends HTMLElement {
                         <div class="planning-body-container">
                             <div class="planning-body">
                                 <div class="time-column">
-                                    
                                     ${this.creerTimeSlots()}
                                 </div>
                                 <div class="day-column" id="lundi"></div>
@@ -190,8 +180,7 @@ class Planning extends HTMLElement {
         localStorage.removeItem('evenements');
 
         // Supprimer tous les événements du planning
-        const eventSlots = this.shadowRoot.querySelectorAll('.event-slot');
-        eventSlots.forEach(eventSlot => eventSlot.remove());
+        this.effacerEvenements();
     }
 
     initialiserClicDiv() {
