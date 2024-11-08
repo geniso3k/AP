@@ -119,3 +119,42 @@ body {
 .event-slot:hover {
     background-color: #218838;
 }
+
+
+/*Poignées */
+
+.poigneeBas, .poigneeHaut {
+    cursor: s-resize; /* 's-resize' pour poigneeBas, 'n-resize' pour poigneeHaut */
+    background-color: black;
+    position: absolute;
+    width: 10px;
+    height: 10px; /* Assurez-vous que les poignées ont une hauteur */
+    left: 45%;
+    border-radius: 50%;
+    opacity: 1; /* Assurez-vous qu'elles sont visibles */
+    transform: scale(1); /* Assurez-vous qu'elles ne sont pas réduites */
+}
+
+/* Positionnement spécifique pour chaque poignée */
+.poigneeHaut {
+    cursor: n-resize;
+    top: -5px;
+}
+
+.poigneeBas {
+    cursor: s-resize;
+    bottom: -5px;
+}
+
+/* Animation d'apparition au survol */
+.event-slot .poigneeHaut, .event-slot .poigneeBas {
+    transition: transform 0.2s ease-out, opacity 0.5s ease-out;
+    opacity: 0; /* Initialement invisible */
+    transform: scale(0); /* Initialement réduites */
+}
+
+.event-slot:hover .poigneeHaut, .event-slot:hover .poigneeBas {
+    transform: scale(1); /* Agrandissement lors du survol */
+    opacity: 1; /* Apparition lors du survol */
+}
+/* fin animation */  
