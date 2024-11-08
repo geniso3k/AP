@@ -14,6 +14,9 @@ class Evenement{
         this.div = this.creeObjetHtml();
     }
 
+
+
+
     creeObjetHtml(){
         const div = document.createElement("div");
         div.classList.add("event-slot"); // Ajout d'une classe pour les styles CSS de base
@@ -29,6 +32,8 @@ class Evenement{
 
         this.parentElement.appendChild(div);
 
+
+
         return div;
     }
 
@@ -37,5 +42,6 @@ class Evenement{
         this.div.style.height = newH +"px";
 
     }
+
 
 }

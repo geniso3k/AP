@@ -6,9 +6,15 @@ let planningBody = document.querySelector(".planning-body");
 
     planningBody.addEventListener("mousedown", function(down) {
 
-        let startY = down.offsetY;
         // Utilise `elementFromPoint` pour détecter la colonne sous la souris
         let elementSousLaSouris = document.elementFromPoint(down.clientX, down.clientY);
+        if (!elementSousLaSouris || !elementSousLaSouris.classList.contains("day-column")) {
+            return; // Arrête l'exécution si le clic n'est pas dans une colonne de jour
+        }
+
+
+        let rect = elementSousLaSouris.getBoundingClientRect();
+        let startY = down.clientY - rect.top; // Position relative à day-column
 
          // Création de l'événement en utilisant la classe Evenement
         divCrea = new Evenement(startY, elementSousLaSouris);   
@@ -18,11 +24,14 @@ let planningBody = document.querySelector(".planning-body");
         // Fonction pour gérer le mouvement de la souris uniquement dans la colonne
         function onMouseMove(pos) {
 
-            let relativeY = pos.offsetY;  // Position Y relative à la colonne haut en bas
-
-            let newHeight = Math.abs(relativeY-startY);
+            let relativeY = pos.clientY - rect.top;  // Position Y relative à la colonne haut en bas
             
-            divCrea.setHeight(newHeight);
+                let newHeight = Math.abs(relativeY-startY);
+
+                console.log(newHeight + " : newHeight");
+                
+                divCrea.setHeight(newHeight);
+            
 
         }
 
