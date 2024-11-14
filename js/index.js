@@ -34,6 +34,7 @@ planningBody.addEventListener("mousedown", function(down) {
     }
 
     function onMouseFinish(up) {
+
     // Récupérer l'élément sous la souris
     const elementFin = document.elementFromPoint(up.clientX, up.clientY);
 

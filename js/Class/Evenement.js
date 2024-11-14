@@ -10,9 +10,11 @@ class Evenement {
         this.redimensionnement = null;
         this.columns = [];
         this.divs = [];
+        this.supprimage = false;
 
         this.div = this.creeObjetHtml();
     }
+
 
     ajouterJour(jours, heures = {debut: 0, fin: null}){
         jours.forEach((jour, index) =>{
@@ -28,8 +30,10 @@ class Evenement {
             hauteurTotale - topDiv;
 
             if(index != 0){
+                
 
-        const nouvelleDiv = document.createElement("div");
+
+                const nouvelleDiv = document.createElement("div");
                 nouvelleDiv.classList.add("event-slot");
                 nouvelleDiv.style.position = "absolute";
                 if(index+1 < jours.length && index != 0){
@@ -40,32 +44,44 @@ class Evenement {
                 nouvelleDiv.style.width = "100%";
                 nouvelleDiv.style.backgroundColor = "rgba(0, 123, 255, 0.5)";
                 nouvelleDiv.style.borderRadius = "4px";
-                nouvelleDiv.setAttribute("id", index);
                 nouvelleDiv.setAttribute("name","rien encore");
                 jour.appendChild(nouvelleDiv);
                 this.columns.push(jour);
                 this.divs.push(nouvelleDiv);
 
 
+                if(index+1 === jours.length){
+                    this.lancerTest();
+                    let poigneeBasNvl = document.createElement("div");
+                    poigneeBasNvl.classList.add("poigneeBas");
+                    nouvelleDiv.appendChild(poigneeBasNvl);
+                    this.ajouterEvenementsDiv(nouvelleDiv, null, poigneeBasNvl);
+    
+    
+                }
+
+
             }else{
-                this.div.style.height = "100%";
+                // Vérifier que la hauteur ne dépasse pas celle du conteneur
+                const parentHeight = this.parentElement.getBoundingClientRect().height;
+                const calculatedHeight = parentHeight - topDiv;
+
+                // Appliquer la hauteur limitée
+                this.div.style.height = calculatedHeight + "px";
+                this.height = calculatedHeight;
                 
             }
 
-            
-             
 
-            
-
-
-            //fin foreach
-            /*
-            console.log("index : "+ index );
-            console.dir("id : "+jour.id);
-            console.log("=========");
-*/
         });
 
+    }
+    lancerTest(){
+        //lancement test console.log("lancement test");
+        if(this.divs.length > 0){
+            this.poigneeBas.remove();
+            this.supprimage = true;
+        }
     }
 
     creeObjetHtml() {
@@ -78,10 +94,9 @@ class Evenement {
         div.style.height = this.height + "px";
         div.style.backgroundColor = "rgba(0, 123, 255, 0.5)";
         div.style.borderRadius = "4px";
-        div.classList.add("redimensionnement");
         div.style.minWidth = "20px";
 
-        if(this.divs.length <= 0){
+        
 
             this.poigneeHaut = document.createElement("div");
             this.poigneeHaut.classList.add("poigneeHaut");
@@ -95,7 +110,7 @@ class Evenement {
             div.appendChild(this.poigneeHaut);
             div.appendChild(this.poigneeBas);
             this.ajouterEvenementsDiv(div, this.poigneeHaut, this.poigneeBas);
-        }
+
         
         this.parentElement.appendChild(div);
 
@@ -124,115 +139,131 @@ class Evenement {
 
     ajouterEvenementsDiv(divv, poigneeHaut, poigneeBas) {
         const self = this;
-        let rect = self.parentElement.getBoundingClientRect();
+        let rect = divv.parentElement.getBoundingClientRect();
         let initialTop, initialHeight, offsetY, offsetX, initialLeft;
-
+    
+        const setHeight = (newH) => {
+            divv.style.height = newH + "px";
+        };
+    
+        const setTop = (newT) => {
+            divv.style.top = newT + "px";
+        };
+    
+        const getHeight = () => {
+            return parseFloat(divv.style.height) || divv.getBoundingClientRect().height;
+        };
+    
+        const getTop = () => {
+            return parseFloat(divv.style.top) || 0;
+        };
+    
         const onMouseMove = (event) => {
             const currentY = event.clientY - rect.top;
             const currentX = event.clientX - rect.left;
             const directionY = currentY - self.startY;
             const directionX = currentX - self.startX;
-
+    
             switch (self.redimensionnement) {
                 case "haut": {
                     const nouveauTop = currentY - offsetY;
                     const newHeight = initialHeight + (initialTop - nouveauTop);
-
+    
                     if (newHeight >= 20 && nouveauTop >= 0) {
-                        self.setTop(nouveauTop);
-                        self.setHeight(newHeight);
+                        setTop(nouveauTop);
+                        setHeight(newHeight);
                     }
                     break;
                 }
                 case "bas": {
                     const newHeight = initialHeight + directionY;
-
+    
                     if (newHeight >= 20 && (initialTop + newHeight) <= rect.height) {
-                        self.setHeight(newHeight);
+                        setHeight(newHeight);
                     }
                     break;
                 }
                 case "centre": {
-                    self.div.classList.add("dragging");
+                    divv.classList.add("dragging");
                     
                     const nouveauTop = currentY - offsetY;
                     const nouveauLeft = currentX - offsetX;
                     
-
-                    if (nouveauTop >= 0 && (nouveauTop + self.height) <= rect.height) {
-                        self.setTop(nouveauTop);
+                    if (nouveauTop >= 0 && (nouveauTop + getHeight()) <= rect.height) {
+                        setTop(nouveauTop);
                     }
-
-                    // Vérifier les limites horizontales
-                    if (nouveauLeft >= 0 && (nouveauLeft + self.div.offsetWidth) <= self.parentElement.offsetWidth) {
-                        self.setLeft(nouveauLeft);
+    
+                    if (nouveauLeft >= 0 && (nouveauLeft + divv.offsetWidth) <= divv.parentElement.offsetWidth) {
+                        divv.style.left = nouveauLeft + "px";
                     }
-
-                    // Détecter la colonne sous la souris
+    
                     const elementSousLaSouris = document.elementFromPoint(event.clientX, event.clientY);
-                    if (elementSousLaSouris && elementSousLaSouris.classList.contains("day-column") && elementSousLaSouris !== self.parentElement) {
-                        // Changer le parent de la div
-                        self.parentElement = elementSousLaSouris;
-                        self.parentElement.appendChild(self.div);
-
-                        // Mettre à jour rect pour le nouveau parent
-                        rect = self.parentElement.getBoundingClientRect();
-
-                        // Recalculer offsetX et offsetY pour le nouveau parent
+                    if (elementSousLaSouris && elementSousLaSouris.classList.contains("day-column") && elementSousLaSouris !== divv.parentElement) {
+                        elementSousLaSouris.appendChild(divv);
+                        
+    
+                        rect = divv.parentElement.getBoundingClientRect();
+    
                         self.startX = event.clientX - rect.left;
                         self.startY = event.clientY - rect.top;
-                        offsetX = self.startX - self.left;
-                        offsetY = self.startY - self.top;
+                        offsetX = self.startX - (parseFloat(divv.style.left) || 0);
+                        offsetY = self.startY - (parseFloat(divv.style.top) || 0);
                     }
-
+    
                     break;
                 }
                 default:
                     break;
             }
         };
-
+    
         const onMouseUp = () => {
-            self.div.classList.remove("dragging");
+            divv.classList.remove("dragging");
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
             self.redimensionnement = null;
         };
-
-        poigneeHaut.addEventListener("mousedown", (down) => {
-            self.redimensionnement = "haut";
-            self.startY = down.clientY - rect.top;
-            self.startX = down.clientX - rect.left;
-            initialTop = self.top;
-            initialHeight = self.height;
-            offsetY = self.startY - initialTop;
-            offsetX = self.startX - self.left;
-            document.addEventListener("mousemove", onMouseMove);
-            document.addEventListener("mouseup", onMouseUp);
-        });
-
-        poigneeBas.addEventListener("mousedown", (down) => {
-            self.redimensionnement = "bas";
-            self.startY = down.clientY - rect.top;
-            self.startX = down.clientX - rect.left;
-            initialTop = self.top;
-            initialHeight = self.height;
-            // Pas besoin d'offsetY pour le redimensionnement vers le bas
-            document.addEventListener("mousemove", onMouseMove);
-            document.addEventListener("mouseup", onMouseUp);
-        });
-
-        divv.addEventListener("mousedown", (down) => {
-            if (!down.target.classList.contains("poigneeHaut") && !down.target.classList.contains("poigneeBas")) {
-                self.redimensionnement = "centre";
+    
+        if (this.supprimage == false && poigneeHaut) {
+            poigneeHaut.addEventListener("mousedown", (down) => {
+                self.redimensionnement = "haut";
+                rect = divv.parentElement.getBoundingClientRect();
                 self.startY = down.clientY - rect.top;
-                self.startX = down.clientX - rect.left;
-                initialTop = self.top;
-                initialLeft = self.left;
+                initialTop = getTop();
+                initialHeight = getHeight();
                 offsetY = self.startY - initialTop;
-                offsetX = self.startX - initialLeft;
+                offsetX = self.startX - (parseFloat(divv.style.left) || 0);
                 document.addEventListener("mousemove", onMouseMove);
                 document.addEventListener("mouseup", onMouseUp);
+            });
+        }
+    
+        if (poigneeBas) {
+            poigneeBas.addEventListener("mousedown", (down) => {
+                self.redimensionnement = "bas";
+                rect = divv.parentElement.getBoundingClientRect();
+                self.startY = down.clientY - rect.top;
+                initialTop = getTop();
+                initialHeight = getHeight();
+                document.addEventListener("mousemove", onMouseMove);
+                document.addEventListener("mouseup", onMouseUp);
+            });
+        }
+    
+        divv.addEventListener("mousedown", (down) => {
+            if (this.supprimage == false){
+                if (!down.target.classList.contains("poigneeHaut") && !down.target.classList.contains("poigneeBas")) {
+                    self.redimensionnement = "centre";
+                    rect = divv.parentElement.getBoundingClientRect();
+                    self.startY = down.clientY - rect.top;
+                    self.startX = down.clientX - rect.left;
+                    initialTop = getTop();
+                    initialLeft = parseFloat(divv.style.left) || 0;
+                    offsetY = self.startY - initialTop;
+                    offsetX = self.startX - initialLeft;
+                    document.addEventListener("mousemove", onMouseMove);
+                    document.addEventListener("mouseup", onMouseUp);
+                }
             }
         });
     }
