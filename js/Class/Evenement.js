@@ -8,8 +8,64 @@ class Evenement {
         this.top = Math.min(this.startY, this.endY);
         this.left = 0;
         this.redimensionnement = null;
+        this.columns = [];
+        this.divs = [];
 
         this.div = this.creeObjetHtml();
+    }
+
+    ajouterJour(jours, heures = {debut: 0, fin: null}){
+        jours.forEach((jour, index) =>{
+            if (this.columns.includes(jour)) return;
+            
+            const hauteurTotale = jour.getBoundingClientRect().height;
+
+            const topDiv = heures.debut ? (heures.debut / 24) * hauteurTotale : 0;
+
+            const hauteurDiv = heures.fin ? 
+            ((heures.fin - (heures.debut || 0)) / 24) * hauteurTotale
+            : 
+            hauteurTotale - topDiv;
+
+            if(index != 0){
+
+        const nouvelleDiv = document.createElement("div");
+                nouvelleDiv.classList.add("event-slot");
+                nouvelleDiv.style.position = "absolute";
+                if(index+1 < jours.length && index != 0){
+                    nouvelleDiv.style.height = "100%";
+                }else{
+                    nouvelleDiv.style.height = hauteurDiv + topDiv + "px";
+                }
+                nouvelleDiv.style.width = "100%";
+                nouvelleDiv.style.backgroundColor = "rgba(0, 123, 255, 0.5)";
+                nouvelleDiv.style.borderRadius = "4px";
+                nouvelleDiv.setAttribute("id", index);
+                nouvelleDiv.setAttribute("name","rien encore");
+                jour.appendChild(nouvelleDiv);
+                this.columns.push(jour);
+                this.divs.push(nouvelleDiv);
+
+
+            }else{
+                this.div.style.height = "100%";
+                
+            }
+
+            
+             
+
+            
+
+
+            //fin foreach
+            /*
+            console.log("index : "+ index );
+            console.dir("id : "+jour.id);
+            console.log("=========");
+*/
+        });
+
     }
 
     creeObjetHtml() {
@@ -23,18 +79,26 @@ class Evenement {
         div.style.backgroundColor = "rgba(0, 123, 255, 0.5)";
         div.style.borderRadius = "4px";
         div.classList.add("redimensionnement");
+        div.style.minWidth = "20px";
 
-        this.poigneeHaut = document.createElement("div");
-        this.poigneeHaut.classList.add("poigneeHaut");
+        if(this.divs.length <= 0){
 
-        this.poigneeBas = document.createElement("div");
-        this.poigneeBas.classList.add("poigneeBas");
+            this.poigneeHaut = document.createElement("div");
+            this.poigneeHaut.classList.add("poigneeHaut");
 
+
+            this.poigneeBas = document.createElement("div");
+            this.poigneeBas.classList.add("poigneeBas");
+
+
+            this.parentElement.appendChild(div);
+            div.appendChild(this.poigneeHaut);
+            div.appendChild(this.poigneeBas);
+            this.ajouterEvenementsDiv(div, this.poigneeHaut, this.poigneeBas);
+        }
+        
         this.parentElement.appendChild(div);
-        div.appendChild(this.poigneeHaut);
-        div.appendChild(this.poigneeBas);
 
-        this.ajouterEvenementsDiv(div, this.poigneeHaut, this.poigneeBas);
 
         return div;
     }
