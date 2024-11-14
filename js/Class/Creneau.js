@@ -1,10 +1,9 @@
 //Class Creneau
 class Creneau{
-    static compteur = 0;
     static creneaux = [];
     constructor(id, motif, dateDebut, dateFin, heureDebut, heureFin){
 
-        this.id = Creneau.compteur++;
+        this.id = Creneau.creneaux.length;
         this.motif = motif;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
