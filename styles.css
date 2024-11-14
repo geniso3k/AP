@@ -158,3 +158,13 @@ body {
     opacity: 1; /* Apparition lors du survol */
 }
 /* fin animation */  
+
+/* Classe pour la div lorsqu'elle est en train d'être déplacée */
+.event-slot.dragging {
+    opacity: 0.8; /* Légèrement transparent */
+    transform: scale(1.1); /* Agrandir un peu */
+    z-index: 1000; /* Assurez-vous qu'elle soit au-dessus des autres éléments */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ajout d'une ombre */
+    cursor: grabbing; /* Changement de curseur */
+    transition: transform 0.2s, opacity 0.2s;
+}
