@@ -51,10 +51,13 @@ planningBody.addEventListener("mousedown", function(down) {
     // Récupérer tous les jours sélectionnés
     const jours = toutJourSel(jourD, jourFin);
 
+
     // Si les jours sont différents, ajouter les divs pour ces jours
     if (jourFin != jourD) {
         divCrea.ajouterJour(jours, { debut: heureDebut, fin: heureFin });
     }
+
+    
     // Vérifier la hauteur minimale
     if (parseInt(divCrea.getHeight()) < 20) {
         divCrea.setHeight(20);
@@ -63,6 +66,19 @@ planningBody.addEventListener("mousedown", function(down) {
     // Nettoyer les événements
     planningBody.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", onMouseFinish);
+
+    let creneau = new Creneau("Sans Motif", jourD, jourFin, heureDebut, heureFin);
+    Creneau.ajouterCreneaux(creneau);
+
+    creneau.ajouterEvenement(divCrea);
+
+    console.log("Evenements du creneau : ");
+
+    creneau.voirEvenements();
+
+    console.log("Tous les créneaux : ");
+
+    Creneau.voirCreneaux();
 }
 
     function toutJourSel(jourDebut, jourFin) {
