@@ -11,6 +11,7 @@ class Evenement {
         this.columns = [];
         this.divs = [];
         this.supprimage = false;
+        this.dataId = null;
 
         // Utiliser creeObjetHtml pour créer la div principale
         this.div = this.creeObjetHtml(parentElement, {
@@ -90,11 +91,10 @@ class Evenement {
 
         const motifText = document.createElement("p");
         motifText.classList.add("motif-text");
-        motifText.style.textAlign = "center";
-        motifText.setAttribute("draggable",false);
-        motifText.style.margin = "5px";
-        motifText.style.fontSize = "12px";
-        motifText.style.color = "#333";
+        let uniqueID = "event-"+ Creneau.evenements++;
+        DIV.setAttribute("data-id", uniqueID);
+        this.dataId = uniqueID;
+
         DIV.appendChild(motifText); // Ajouter le <p> à l'événement
 
         

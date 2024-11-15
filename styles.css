@@ -247,9 +247,17 @@ body {
 
 .alert-button.save {
     background-color: #4caf50;
+}
 
-
-
+    .motif-text {
+        text-align: center;
+        margin: 5px;
+        font-size: 12px;
+        user-select: none; /* Désactive la sélection du texte */
+        -webkit-user-select: none; /* Pour les navigateurs basés sur WebKit (Chrome, Safari) */
+        -moz-user-select: none; /* Pour Firefox */
+        -ms-user-select: none; /* Pour Internet Explorer/Edge */
+    }
 
 
     /* FIN ALERTE */

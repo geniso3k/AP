@@ -81,42 +81,32 @@ planningBody.addEventListener("mousedown", function(down) {
     let creneau = new Creneau("Sans Motif", jourD, jourFin, heureDebut, heureFin);
     Creneau.ajouterCreneaux(creneau);
 
+
     creneau.ajouterEvenement(divCrea);
-
-    console.log("Evenements du creneau : ");
-
-    creneau.voirEvenements();
-
-    console.log("Tous les créneaux : ");
-
     Creneau.voirCreneaux();
 
+    console.log("==========================");
+    
     const ALERT_BOX = document.getElementById("custom-alert");
     showAlert(ALERT_BOX);
 
-    document.getElementById("alert-save").addEventListener("click", () => saveInput(creneau));
+    document.getElementById("alert-save").addEventListener("click", () => saveInput(creneau, divCrea.dataId));
     document.getElementById("alert-cancel").addEventListener("click", () => closeBox());
 }
-function saveInput(cren){
+function saveInput(creneau) {
+    const input = document.getElementById("alert-input");
+    const newMotif = input.value.trim();
 
-    let inputs = document.getElementById("alert-input");
-    cren.Motif = inputs.value.trim();
-    console.log("Liste des événements du créneau :", cren.evenements);
-cren.evenements.forEach(ev => {
-    console.log("Événement trouvé :", ev); // Vérifie chaque événement
-    const motifText = ev.div.querySelector(".motif-text");
-    if (motifText) {
-        motifText.textContent = cren.Motif;
-        console.log("Motif mis à jour :", cren.Motif);
-    } else {
-        console.warn("Aucun <p> trouvé pour cet événement.");
-    }
-});
-
-    closeBox();
+    // Mettre à jour le motif pour le créneau
+    creneau.Motif = newMotif;
 
 
+
+    closeBox(); // Fermer la boîte d'alerte
 }
+
+
+
 function closeBox(){
     let alertBox = document.getElementById("custom-alert");
     alertBox.classList.add("hidden");

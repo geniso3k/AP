@@ -1,6 +1,7 @@
 //Class Creneau
 class Creneau{
     static creneaux = [];
+    static evenements = 0;
     constructor(id, motif, dateDebut, dateFin, heureDebut, heureFin){
 
         this.id = Creneau.creneaux.length;
@@ -55,10 +56,12 @@ class Creneau{
     }
 
     ajouterEvenement(ev){
-
         // if (ev.date >= this.dateDebut && ev.date <= this.dateFin &&
           //  ev.heureDebut >= this.heureDebut && ev.heureFin <= this.heureFin) {
-            this.evenements.push(ev);/*
+            
+            this.evenements.push(ev);
+            /*
+            
         } else {
             console.error(
                 `L'événement ne respecte pas les limites du créneau (${this.dateDebut} ${this.heureDebut} - ${this.dateFin} ${this.heureFin}).`
@@ -66,6 +69,11 @@ class Creneau{
         }*/
 
     }
+    trouverEvenementParId(eventId) {
+        return this.evenements.find(ev => ev.id === eventId) || null;
+    }
+
+
 
     voirEvenements(){
 
@@ -75,9 +83,30 @@ class Creneau{
 
     }
 
-    set Motif(m){
+    set Motif(newMotif){
 
-        this.motif = m;
+        this.voirEvenements();
+
+        this.motif = newMotif;
+
+        this.evenements.forEach(event => {
+            
+            const div = document.querySelector(`.event-slot[data-id="${event.dataId}"]`);
+            console.log(event.id);
+            
+            if (div) {
+                const motifText = div.querySelector(".motif-text");
+                if (motifText) {
+                    motifText.textContent = newMotif; // Mise à jour du texte
+                    console.log(`Motif mis à jour pour l'événement ${event.id} dans le DOM :`, newMotif, `sur la div ${div}`);
+                } else {
+                    console.warn("Aucun <p> trouvé pour cet événement dans le DOM.");
+                }
+            } else {
+                console.warn("Aucune div trouvée pour l'événement avec ID :", event.id);
+            }
+        });
+
         
 
     }
