@@ -12,7 +12,15 @@ class Evenement {
         this.divs = [];
         this.supprimage = false;
 
-        this.div = this.creeObjetHtml();
+        // Utiliser creeObjetHtml pour créer la div principale
+        this.div = this.creeObjetHtml(parentElement, {
+            top: this.top,
+            height: this.height,
+            width: "100%",
+            left: this.left
+        });
+        // Ajouter les poignées
+        this.ajouterPoignees(this.div);
     }
 
 
@@ -29,93 +37,89 @@ class Evenement {
             : 
             hauteurTotale - topDiv;
 
-            if(index != 0){
-                
+            let nvHeight;
+            if(index+1 < jours.length && index != 0){
 
+                nvHeight = hauteurTotale;
 
-                const nouvelleDiv = document.createElement("div");
-                nouvelleDiv.classList.add("event-slot");
-                nouvelleDiv.style.position = "absolute";
-                if(index+1 < jours.length && index != 0){
-                    nouvelleDiv.style.height = "100%";
-                }else{
-                    nouvelleDiv.style.height = hauteurDiv + topDiv + "px";
-                }
-                nouvelleDiv.style.width = "100%";
-                nouvelleDiv.style.backgroundColor = "rgba(0, 123, 255, 0.5)";
-                nouvelleDiv.style.borderRadius = "4px";
-                nouvelleDiv.setAttribute("name","rien encore");
-                jour.appendChild(nouvelleDiv);
+            }else{
+
+                nvHeight = hauteurDiv + topDiv;
+
+            }
+            console.log(nvHeight);
+
+            if (index === 0) {
+                this.div.style.height = `${this.parentElement.getBoundingClientRect().height - topDiv}px`;
+            } else {
+                const nouvelleDiv = this.creeObjetHtml(jour, {
+                    height: nvHeight,
+                    width: "100%",
+                    backgroundColor: "rgba(0, 123, 255, 0.5)"
+                });
+    
                 this.columns.push(jour);
                 this.divs.push(nouvelleDiv);
-
-
-                if(index+1 === jours.length){
+    
+                if (index + 1 === jours.length) {
                     this.lancerTest();
-                    let poigneeBasNvl = document.createElement("div");
+                    const poigneeBasNvl = document.createElement("div");
                     poigneeBasNvl.classList.add("poigneeBas");
                     nouvelleDiv.appendChild(poigneeBasNvl);
                     this.ajouterEvenementsDiv(nouvelleDiv, null, poigneeBasNvl);
-    
-    
                 }
-
-
-            }else{
-                // Vérifier que la hauteur ne dépasse pas celle du conteneur
-                const parentHeight = this.parentElement.getBoundingClientRect().height;
-                const calculatedHeight = parentHeight - topDiv;
-
-                // Appliquer la hauteur limitée
-                this.div.style.height = calculatedHeight + "px";
-                this.height = calculatedHeight;
-                
             }
-
-
         });
-
     }
     lancerTest(){
         //lancement test console.log("lancement test");
         if(this.divs.length > 0){
-            this.poigneeBas.remove();
+            this.POIGNEE_BAS.remove();
             this.supprimage = true;
         }
     }
 
-    creeObjetHtml() {
-        const div = document.createElement("div");
-        div.classList.add("event-slot");
-        div.style.position = "absolute";
-        div.style.top = this.top + "px";
-        div.style.left = this.left + "px";
-        div.style.width = "100%"; // Vous pouvez ajuster la largeur si nécessaire
-        div.style.height = this.height + "px";
-        div.style.backgroundColor = "rgba(0, 123, 255, 0.5)";
-        div.style.borderRadius = "4px";
-        div.style.minWidth = "20px";
+    creeObjetHtml(parent, { top = 0, height = 0, left=0, width = "100%"} = {}) {
+        const DIV = document.createElement("div");
+        DIV.classList.add("event-slot");
+        DIV.style.position = "absolute";
+        DIV.style.top = top + "px";
+        DIV.style.left = left + "px";
+        DIV.style.width = width; 
+        DIV.style.height = height + "px";
+
+        const motifText = document.createElement("p");
+        motifText.classList.add("motif-text");
+        motifText.style.textAlign = "center";
+        motifText.setAttribute("draggable",false);
+        motifText.style.margin = "5px";
+        motifText.style.fontSize = "12px";
+        motifText.style.color = "#333";
+        DIV.appendChild(motifText); // Ajouter le <p> à l'événement
 
         
-
-            this.poigneeHaut = document.createElement("div");
-            this.poigneeHaut.classList.add("poigneeHaut");
-
-
-            this.poigneeBas = document.createElement("div");
-            this.poigneeBas.classList.add("poigneeBas");
+        if(parent){
+            parent.appendChild(DIV);
+        }
 
 
-            this.parentElement.appendChild(div);
-            div.appendChild(this.poigneeHaut);
-            div.appendChild(this.poigneeBas);
-            this.ajouterEvenementsDiv(div, this.poigneeHaut, this.poigneeBas);
-
-        
-        this.parentElement.appendChild(div);
+        return DIV;
+    }
 
 
-        return div;
+    ajouterPoignees(d){
+
+        this.POIGNEE_HAUT = document.createElement("div");
+        this.POIGNEE_HAUT.classList.add("poigneeHaut");
+        d.appendChild(this.POIGNEE_HAUT);
+
+        this.POIGNEE_BAS = document.createElement("div");
+        this.POIGNEE_BAS.classList.add("poigneeBas");
+        d.appendChild(this.POIGNEE_BAS);
+
+
+        this.ajouterEvenementsDiv(d,this.POIGNEE_HAUT,this.POIGNEE_BAS);
+
     }
 
     setHeight(newH) {
@@ -222,6 +226,7 @@ class Evenement {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
             self.redimensionnement = null;
+            
         };
     
         if (this.supprimage == false && poigneeHaut) {
@@ -267,4 +272,5 @@ class Evenement {
             }
         });
     }
+    
 }

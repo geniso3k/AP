@@ -56,14 +56,14 @@ class Creneau{
 
     ajouterEvenement(ev){
 
-         if (ev.date >= this.dateDebut && ev.date <= this.dateFin &&
-            ev.heureDebut >= this.heureDebut && ev.heureFin <= this.heureFin) {
-            this.evenements.push(ev);
+        // if (ev.date >= this.dateDebut && ev.date <= this.dateFin &&
+          //  ev.heureDebut >= this.heureDebut && ev.heureFin <= this.heureFin) {
+            this.evenements.push(ev);/*
         } else {
             console.error(
                 `L'événement ne respecte pas les limites du créneau (${this.dateDebut} ${this.heureDebut} - ${this.dateFin} ${this.heureFin}).`
             );
-        }
+        }*/
 
     }
 
@@ -78,6 +78,7 @@ class Creneau{
     set Motif(m){
 
         this.motif = m;
+        
 
     }
 

@@ -107,18 +107,17 @@ body {
 /* Style des créneaux horaires (événements) */
 .event-slot {
     position: absolute;
-    background-color: #28a745;
-    border-radius: 5px;
+    background-color: rgba(0, 123, 255, 0.5);
+    border-radius: 4px;
     color: #fff;
     padding: 5px;
     font-size: 12px;
     cursor: pointer;
     box-sizing: border-box;
+    min-height: 20px;
 }
 
-.event-slot:hover {
-    background-color: #218838;
-}
+
 
 
 /*Poignées */
@@ -168,3 +167,89 @@ body {
     cursor: grabbing; /* Changement de curseur */
     transition: transform 0.2s, opacity 0.2s;
 }
+
+
+
+/* LES ALERTES */
+
+/* Style principal de la boîte d'alerte */
+.custom-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+/* Masquer la boîte par défaut */
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Contenu de la boîte d'alerte */
+.custom-alert-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+}
+
+/* Titre de l'alerte */
+.alert-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+/* Message explicatif */
+.alert-message {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #666;
+}
+
+/* Zone de texte */
+.alert-input {
+    width: 100%;
+    height: 80px;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+}
+
+/* Boutons */
+.alert-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.alert-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.alert-button.save {
+    background-color: #4caf50;
+
+
+
+
+
+    /* FIN ALERTE */

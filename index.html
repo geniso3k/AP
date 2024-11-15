@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="custom-alert" class="custom-alert hidden">
+        <div class="custom-alert-content">
+            <h2 class="alert-title">Enregistrer des informations</h2>
+            <p class="alert-message">Veuillez entrer le motif de cet évènement :</p>
+            <textarea id="alert-input" class="alert-input" placeholder="Entrez votre motif ici..."></textarea>
+            <div class="alert-buttons">
+                <button id="alert-save" class="alert-button save">Enregistrer</button>
+                <button id="alert-cancel" class="alert-button cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="planning-container">
         <!-- Barre de navigation pour changer de semaine -->
         <div class="navigation">

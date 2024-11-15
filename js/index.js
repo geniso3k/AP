@@ -33,7 +33,18 @@ planningBody.addEventListener("mousedown", function(down) {
 
     }
 
+   function showAlert(alertBox){
+
+        alertBox.classList.remove("hidden"); // Supprime la classe "hidden"
+        alertBox.style.visibility = "visible"; // Assure que l'alerte est visible
+        alertBox.style.opacity = "1"; // Ajoute une animation fluide si nécessaire
+    
+        }
+
+
     function onMouseFinish(up) {
+
+
 
     // Récupérer l'élément sous la souris
     const elementFin = document.elementFromPoint(up.clientX, up.clientY);
@@ -79,6 +90,39 @@ planningBody.addEventListener("mousedown", function(down) {
     console.log("Tous les créneaux : ");
 
     Creneau.voirCreneaux();
+
+    const ALERT_BOX = document.getElementById("custom-alert");
+    showAlert(ALERT_BOX);
+
+    document.getElementById("alert-save").addEventListener("click", () => saveInput(creneau));
+    document.getElementById("alert-cancel").addEventListener("click", () => closeBox());
+}
+function saveInput(cren){
+
+    let inputs = document.getElementById("alert-input");
+    cren.Motif = inputs.value.trim();
+    console.log("Liste des événements du créneau :", cren.evenements);
+cren.evenements.forEach(ev => {
+    console.log("Événement trouvé :", ev); // Vérifie chaque événement
+    const motifText = ev.div.querySelector(".motif-text");
+    if (motifText) {
+        motifText.textContent = cren.Motif;
+        console.log("Motif mis à jour :", cren.Motif);
+    } else {
+        console.warn("Aucun <p> trouvé pour cet événement.");
+    }
+});
+
+    closeBox();
+
+
+}
+function closeBox(){
+    let alertBox = document.getElementById("custom-alert");
+    alertBox.classList.add("hidden");
+    alertBox.style.visibility = "hidden";
+    alertBox.style.opacity = "0";
+    document.getElementById("alert-input").value = ""; // Réinitialiser le champ d'entrée
 }
 
     function toutJourSel(jourDebut, jourFin) {
