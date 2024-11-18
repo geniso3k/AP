@@ -11,17 +11,19 @@ class Evenement {
         this.columns = [];
         this.divs = [];
         this.supprimage = false;
-        this.dataId = null;
+        this.motif = "Sans motif";
 
         // Utiliser creeObjetHtml pour créer la div principale
         this.div = this.creeObjetHtml(parentElement, {
             top: this.top,
             height: this.height,
             width: "100%",
-            left: this.left
+            left: this.left,
+            motif : this.motif
         });
         // Ajouter les poignées
         this.ajouterPoignees(this.div);
+        
     }
 
 
@@ -80,7 +82,7 @@ class Evenement {
         }
     }
 
-    creeObjetHtml(parent, { top = 0, height = 0, left=0, width = "100%"} = {}) {
+    creeObjetHtml(parent, { top = 0, height = 0, left=0, width = "100%", motif} = {}) {
         const DIV = document.createElement("div");
         DIV.classList.add("event-slot");
         DIV.style.position = "absolute";
@@ -89,18 +91,17 @@ class Evenement {
         DIV.style.width = width; 
         DIV.style.height = height + "px";
 
-        const motifText = document.createElement("p");
-        motifText.classList.add("motif-text");
-        let uniqueID = "event-"+ Creneau.evenements++;
-        DIV.setAttribute("data-id", uniqueID);
-        this.dataId = uniqueID;
+        this.motifText = document.createElement("p");
+        this.motifText.classList.add("motif-text");
+        this.motifText.innerText = motif;
 
-        DIV.appendChild(motifText); // Ajouter le <p> à l'événement
+        DIV.appendChild(this.motifText); // Ajouter le <p> à l'événement
 
         
         if(parent){
             parent.appendChild(DIV);
         }
+
 
 
         return DIV;
@@ -121,6 +122,48 @@ class Evenement {
         this.ajouterEvenementsDiv(d,this.POIGNEE_HAUT,this.POIGNEE_BAS);
 
     }
+
+
+    
+    set Motif(m){
+
+        this.motif = m;
+        this.motifText.innerHTML = m;
+
+    }
+    get Motif(){
+
+        return this.motif;
+    }
+
+    showAlert(alertBox, notreDiv){
+
+        alertBox.classList.remove("hidden"); 
+        alertBox.style.visibility = "visible"; 
+        alertBox.style.opacity = "1"; 
+        document.getElementById("alert-save").addEventListener("click", () => this.saveInput(notreDiv));
+        document.getElementById("alert-cancel").addEventListener("click", () => this.closeBox());
+    
+    }
+    saveInput(nvlDiv){
+        const INPUT = document.getElementById("alert-input");
+        const NEW_MOTIF = INPUT.value.trim();
+
+        nvlDiv.Motif = NEW_MOTIF;
+
+        this.motifText.innerText = NEW_MOTIF;
+        this.closeBox();
+
+    }
+
+    closeBox(){
+        let alertBox = document.getElementById("custom-alert");
+        alertBox.classList.add("hidden");
+        alertBox.style.visibility = "hidden";
+        alertBox.style.opacity = "0";
+        document.getElementById("alert-input").value = ""; // Réinitialiser le champ d'entrée
+    }
+
 
     setHeight(newH) {
         this.div.style.height = newH + "px";
@@ -229,7 +272,9 @@ class Evenement {
             
         };
     
-        if (this.supprimage == false && poigneeHaut) {
+        if (self.supprimage == false && poigneeHaut) {
+            const ALERT_BOX = document.getElementById("custom-alert");
+            divv.addEventListener("dblclick", (down) => this.showAlert(ALERT_BOX, divv));
             poigneeHaut.addEventListener("mousedown", (down) => {
                 self.redimensionnement = "haut";
                 rect = divv.parentElement.getBoundingClientRect();
