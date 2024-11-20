@@ -23,6 +23,7 @@ class Evenement {
         });
         // Ajouter les poignées
         this.ajouterPoignees(this.div);
+        console.log(this.parentElement);
     }
 
     ajouterJour(jours, heures = { debut: 0, fin: null }) {
