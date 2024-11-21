@@ -11,7 +11,7 @@ class Evenement {
         this.columns = [];
         this.divs = [];
         this.supprimage = false;
-        this.motif = "Sans motif";
+        this.motif = "Sans motif (Double click pour modifier)";
 
         // Utiliser creeObjetHtml pour créer la div principale avec le motif
         this.div = this.creeObjetHtml(parentElement, {
@@ -51,8 +51,7 @@ class Evenement {
             } else {
                 const nouvelleDiv = this.creeObjetHtml(jour, {
                     height: nvHeight,
-                    width: "100%",
-                    backgroundColor: "rgba(0, 123, 255, 0.5)"
+                    width: "100%"
                     // Ne pas passer le motif pour les divs suivantes
                 });
 
@@ -313,5 +312,16 @@ class Evenement {
             }
         }
         });
+
+        divv.addEventListener("contextmenu", (event) => {
+            divv.remove();
+            event.preventDefault();
+            return false;
+        });
+
+
+
+
+        
     }
 }
