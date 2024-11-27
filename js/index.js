@@ -1,3 +1,5 @@
+
+let cePlanning = new Planning();
 let planningBody = document.querySelector(".planning-body");
 
 planningBody.addEventListener("mousedown", function(down) {
@@ -12,7 +14,7 @@ planningBody.addEventListener("mousedown", function(down) {
     let startX = down.clientX - rect.left;
 
     // Declare divCrea with let to scope it locally
-    let divCrea = new Evenement(startY, startX, elementSousLaSouris);
+    let divCrea = new Evenement(startY, startX, elementSousLaSouris.id);
 
     function onMouseMove(pos) {
         let relativeY = pos.clientY - rect.top;
@@ -45,6 +47,8 @@ planningBody.addEventListener("mousedown", function(down) {
         if (parseInt(divCrea.getHeight()) < 20) {
             divCrea.setHeight(20);
         }
+        cePlanning.tab = divCrea;
+        console.log(cePlanning.tab);
 
         planningBody.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseFinish);
@@ -67,7 +71,6 @@ planningBody.addEventListener("mousedown", function(down) {
 
         return joursSelectionnes;
     }
-
     planningBody.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseFinish);
     document.addEventListener("mouseleave", onMouseFinish);

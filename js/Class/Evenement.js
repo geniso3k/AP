@@ -1,9 +1,21 @@
 class Evenement {
-    constructor(startY, startX, parentElement) {
+    static compteur = (() => {
+        const storedTab = JSON.parse(localStorage.getItem("tab"));
+        return Array.isArray(storedTab) ? storedTab.length : 0;
+    })();
+    constructor(startY, startX, parentElements) {
+        this.parentElement = document.getElementById(parentElements);
+        if (!parentElements) {
+            console.warn("parent : "+parentElements);
+            throw new Error("Le parentElement est requis pour créer un événement.");
+        }
+
+
+        this.id = Evenement.compteur ++;
         this.startY = startY;
         this.startX = startX;
         this.endY = startY;
-        this.parentElement = parentElement;
+        this.parentId = parentElements;
         this.height = Math.abs(this.endY - this.startY);
         this.top = Math.min(this.startY, this.endY);
         this.left = 0;
@@ -14,16 +26,16 @@ class Evenement {
         this.motif = "Sans motif (Double click pour modifier)";
 
         // Utiliser creeObjetHtml pour créer la div principale avec le motif
-        this.div = this.creeObjetHtml(parentElement, {
+        this.div = this.creeObjetHtml(this.parentElement, {
             top: this.top,
             height: this.height,
             width: "100%",
             left: this.left,
-            motif: this.motif
+            motif: this.motif,
+            id: this.id
         });
         // Ajouter les poignées
         this.ajouterPoignees(this.div);
-        console.log(this.parentElement);
     }
 
     ajouterJour(jours, heures = { debut: 0, fin: null }) {
@@ -78,7 +90,7 @@ class Evenement {
         }
     }
 
-    creeObjetHtml(parent, { top = 0, height = 0, left = 0, width = "100%", motif } = {}) {
+    creeObjetHtml(parent, { top = 0, height = 0, left = 0, width = "100%", motif, id } = {}) {
         const DIV = document.createElement("div");
         DIV.classList.add("event-slot");
         DIV.style.position = "absolute";
@@ -86,6 +98,7 @@ class Evenement {
         DIV.style.left = left + "px";
         DIV.style.width = width;
         DIV.style.height = height + "px";
+        DIV.setAttribute("DataId", id);
 
         // Créer le motif uniquement si le motif est fourni
         if (motif) {
@@ -261,6 +274,8 @@ class Evenement {
         };
 
         const onMouseUp = () => {
+           // planning.editDebut(divv.getTop, divv.getAttribute("DataId"));
+           // planning.editFin(divv.getHeight, divv.getAttribute("DataId"));
             divv.classList.remove("dragging");
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
@@ -314,8 +329,8 @@ class Evenement {
         });
 
         divv.addEventListener("contextmenu", (event) => {
-            divv.remove();
-            event.preventDefault();
+           // divv.remove();
+            //event.preventDefault();
             return false;
         });
 
@@ -325,3 +340,4 @@ class Evenement {
         
     }
 }
+
