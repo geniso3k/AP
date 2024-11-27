@@ -2,6 +2,12 @@
 let cePlanning = new Planning();
 let planningBody = document.querySelector(".planning-body");
 
+
+document.getElementById("time-header").addEventListener("click", (e) =>{
+    localStorage.clear();
+    console.log("Stockage local supprimé avec succès !");
+});
+
 planningBody.addEventListener("mousedown", function(down) {
     let elementSousLaSouris = document.elementFromPoint(down.clientX, down.clientY);
     if (!elementSousLaSouris || !elementSousLaSouris.classList.contains("day-column")) {

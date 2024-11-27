@@ -25,6 +25,7 @@
         <div class="navigation">
             <button title="Semaine précédente" class="nav-button" id="prev-week" onclick="reculeSemaine()">&lt;</button>
             <span id="current-week" class="current-week"></span>
+            
             <button title="Semaine suivante" class="nav-button" id="next-week" onclick="avanceSemaine('+')">&gt;</button>
         </div>
         
@@ -34,8 +35,8 @@
     <!-- Entête avec les jours de la semaine -->
     <div class="planning-header-container">
         <div class="planning-header">
-            <div class="time-header"></div>
-            <div class="day-header">Lundi 18</div>
+            <div class="time-header" id="time-header"></div>
+            <div class="day-header" id="lundi">Lundi 18</div>
             <div class="day-header">Mardi 19</div>
             <div class="day-header">Mercredi 20</div>
             <div class="day-header">Jeudi 21</div>
@@ -92,9 +93,9 @@
 
     <!-- Script pour la gestion des interactions -->
      
+    <script src="js/calendrier.js"></script>
     <script src="js/class/Evenement.js"></script>
     <script src="js/Class/Planning.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/calendrier.js"></script>
 </body>
 </html>

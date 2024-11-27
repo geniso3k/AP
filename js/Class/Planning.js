@@ -1,24 +1,15 @@
 class Planning{
     constructor(){
         try{
-            this.oldTab = JSON.parse(localStorage.getItem("tab"));
+            this.oldTab = JSON.parse(localStorage.getItem(viserLundi()));
             this._tab = this.oldTab || [];
             
         }catch(e){
-            console.warn("Erreur lors du chargement des évènements.");
+            console.warn("Erreur lors du chargement des évènements. "+e);
             this._tab = [];
         }
         console.log(this.oldTab);
-        if(this.oldTab){
-            let div;
-            this.oldTab.forEach(event => {
-                
-                div = new Evenement(event.startY, event.startX, event.parentId);
-                div.div.style.height = event.height + "px";
-                
-            });
-
-        }
+       
 
     }
 
@@ -33,8 +24,8 @@ class Planning{
     sauvegarder(){
 
 
-        localStorage.setItem("tab", JSON.stringify(this._tab));
-        console.log("Storage : "+localStorage.getItem("tab"));
+        localStorage.setItem(viserLundi(), JSON.stringify(this._tab));
+        console.log("Storage : "+localStorage.getItem(viserLundi()));
 
     }
 
@@ -60,27 +51,27 @@ class Planning{
 
     editDebut(d, i){
 
-        const evenement = this._tab.find(event => event.id === parseInt(id));
+        const evenement = this._tab.find(event => event.id === parseInt(i));
 
         if (evenement) {
-            evenement.debut = nouvelleValeur; // Mettre à jour la propriété `debut`
+            evenement.startX = d; // Mettre à jour la propriété `debut`
             this.sauvegarder(); // Sauvegarder les changements dans localStorage
-            console.log(`Début de l'événement avec ID ${id} modifié à ${nouvelleValeur}`);
+            console.log(`Début de l'événement avec ID ${i} modifié à ${d}`);
         } else {
-            console.error(`Événement avec ID ${id} non trouvé.`);
+            console.error(`Événement avec ID ${i} non trouvé.`);
         }
     }
 
     editFin(f, i){
 
-        const evenement = this._tab.find(event => event.id === parseInt(id));
-
+        const evenement = this._tab.find(event => event.id === parseInt(i));
+        console.log(evenement);
         if (evenement) {
-            evenement.debut = nouvelleValeur; // Mettre à jour la propriété `debut`
+            evenement.startY = f; // Mettre à jour la propriété `debut`
             this.sauvegarder(); // Sauvegarder les changements dans localStorage
-            console.log(`Début de l'événement avec ID ${id} modifié à ${nouvelleValeur}`);
+            console.log(`Début de l'événement avec ID ${i} modifié à ${f}`);
         } else {
-            console.error(`Événement avec ID ${id} non trouvé.`);
+            console.error(`Événement avec ID ${i} non trouvé.`);
         }
 
     }
