@@ -4,9 +4,9 @@ let lundiCourant = new Date();
 lundiCourant.setDate( lundiCourant.getDate() - lundiCourant.getDay() ) ;
 let retourneJour = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let retourneMois = ["janvier","fevrier","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","decembre"];
-
+let annulerTab = false;
 function viserLundi() {
-   return document.getElementById("lundi").innerText;
+   return document.getElementById("current-week").innerText;
 }
 
 
@@ -16,6 +16,7 @@ function supprimerEvents(  ){
 
     // Itérer et supprimer chaque élément
     eventSlots.forEach(element => {
+        console.log("element supprimé" + element);
         element.remove(); // Supprimer l'élément
     });
 }
@@ -59,13 +60,14 @@ function afficheCalendrier( date ) //Pour ajouter la date à coté de jeudi vend
         d.setDate( d.getDate() + 1 ) ;
     }
     cWeek.innerHTML = "Semaine du "+ premier +" au "+ dernier +" " + retourneMois[d.getMonth()] + " " + d.getFullYear();
-
+    annulerTab = true;
 }
 
 function reculeSemaine()
 {
     lundiCourant.setDate( lundiCourant.getDate() - 7 ) ;
     afficheCalendrier( lundiCourant ) ;
+    annulerTab = true;
     afficheEvents();
 
 }
@@ -73,6 +75,7 @@ function avanceSemaine()
 {
     lundiCourant.setDate( lundiCourant.getDate() + 7 ) ;
     afficheCalendrier( lundiCourant ) ;
+    annulerTab = true;
     afficheEvents();
 
 }

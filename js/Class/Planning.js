@@ -1,15 +1,19 @@
 class Planning{
     constructor(){
         try{
+            
             this.oldTab = JSON.parse(localStorage.getItem(viserLundi()));
             this._tab = this.oldTab || [];
+            
             
         }catch(e){
             console.warn("Erreur lors du chargement des évènements. "+e);
             this._tab = [];
         }
-        console.log(this.oldTab);
-       
+        if(annulerTab){
+            this._tab = [];
+            annulerTab = false;
+        }
 
     }
 
@@ -23,7 +27,7 @@ class Planning{
 
     sauvegarder(){
 
-
+        
         localStorage.setItem(viserLundi(), JSON.stringify(this._tab));
         console.log("Storage : "+localStorage.getItem(viserLundi()));
 
