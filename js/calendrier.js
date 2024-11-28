@@ -60,7 +60,7 @@ function afficheCalendrier( date ) //Pour ajouter la date à coté de jeudi vend
         d.setDate( d.getDate() + 1 ) ;
     }
     cWeek.innerHTML = "Semaine du "+ premier +" au "+ dernier +" " + retourneMois[d.getMonth()] + " " + d.getFullYear();
-    annulerTab = true;
+
 }
 
 function reculeSemaine()

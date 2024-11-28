@@ -274,8 +274,7 @@ class Evenement {
         };
 
         const onMouseUp = () => {
-           // planning.editDebut(divv.getTop, divv.getAttribute("DataId"));
-           // planning.editFin(divv.getHeight, divv.getAttribute("DataId"));
+
             divv.classList.remove("dragging");
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);

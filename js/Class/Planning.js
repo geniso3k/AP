@@ -10,24 +10,24 @@ class Planning{
             console.warn("Erreur lors du chargement des évènements. "+e);
             this._tab = [];
         }
-        if(annulerTab){
-            this._tab = [];
-            annulerTab = false;
-        }
 
     }
 
     get tab(){
         return this._tab;
     }
-    set tab(t){
-        this._tab.push(t);
+    set tab(e){
+        if(annulerTab){
+            this._tab = [];
+            annulerTab = false;
+        }
+        this._tab.push(e);
         this.sauvegarder();
     }
 
+ 
     sauvegarder(){
 
-        
         localStorage.setItem(viserLundi(), JSON.stringify(this._tab));
         console.log("Storage : "+localStorage.getItem(viserLundi()));
 
