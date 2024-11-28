@@ -1,36 +1,38 @@
-class Planning{
-    constructor(){
-        try{
-            
-            this.oldTab = JSON.parse(localStorage.getItem(viserLundi()));
-            this._tab = this.oldTab || [];
-            
-            
-        }catch(e){
-            console.warn("Erreur lors du chargement des évènements. "+e);
+class Planning {
+    constructor() {
+        this.currentWeek = this.viserLundi(); // Stocker la semaine courante
+        this.loadEvents();
+    }
+    viserLundi() {
+   return document.getElementById("current-week").innerText;
+}
+
+    loadEvents() {
+        try {
+            const storedEvents = localStorage.getItem(this.currentWeek);
+            this._tab = storedEvents ? JSON.parse(storedEvents) : [];
+        } catch (e) {
+            console.warn("Erreur lors du chargement des évènements. " + e);
             this._tab = [];
         }
-
     }
 
-    get tab(){
+    changeWeek(newWeek) {
+        this.currentWeek = newWeek;
+        this.loadEvents();
+    }
+
+    get tab() {
         return this._tab;
     }
-    set tab(e){
-        if(annulerTab){
-            this._tab = [];
-            annulerTab = false;
-        }
+
+    set tab(e) {
         this._tab.push(e);
         this.sauvegarder();
     }
 
- 
-    sauvegarder(){
-
-        localStorage.setItem(viserLundi(), JSON.stringify(this._tab));
-        console.log("Storage : "+localStorage.getItem(viserLundi()));
-
+    sauvegarder() {
+        localStorage.setItem(this.currentWeek, JSON.stringify(this._tab));
     }
 
     suppEventIndex(i) {

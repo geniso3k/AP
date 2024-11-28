@@ -4,10 +4,7 @@ let lundiCourant = new Date();
 lundiCourant.setDate( lundiCourant.getDate() - lundiCourant.getDay() ) ;
 let retourneJour = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 let retourneMois = ["janvier","fevrier","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","decembre"];
-let annulerTab = false;
-function viserLundi() {
-   return document.getElementById("current-week").innerText;
-}
+
 
 
 function supprimerEvents(  ){
@@ -24,7 +21,7 @@ function afficheEvents() {
     // Supprimer les événements existants avant d'afficher les nouveaux
     supprimerEvents();
     // Récupérer les événements de la semaine suivante depuis localStorage
-    let storedEvents = localStorage.getItem(viserLundi()); // Utiliser la date formatée pour récupérer les événements
+    let storedEvents = localStorage.getItem(cePlanning.viserLundi()); // Utiliser la date formatée pour récupérer les événements
 
     // Vérifier si des événements existent pour cette semaine
     if (storedEvents) {
@@ -67,7 +64,7 @@ function reculeSemaine()
 {
     lundiCourant.setDate( lundiCourant.getDate() - 7 ) ;
     afficheCalendrier( lundiCourant ) ;
-    annulerTab = true;
+    cePlanning.changeWeek(cePlanning.viserLundi());
     afficheEvents();
 
 }
@@ -75,7 +72,7 @@ function avanceSemaine()
 {
     lundiCourant.setDate( lundiCourant.getDate() + 7 ) ;
     afficheCalendrier( lundiCourant ) ;
-    annulerTab = true;
+    cePlanning.changeWeek(cePlanning.viserLundi());
     afficheEvents();
 
 }
