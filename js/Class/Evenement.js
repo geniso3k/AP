@@ -7,7 +7,7 @@ class Evenement {
         this.parentElement = document.getElementById(parentElements);
         if (!parentElements) {
             console.warn("parent : "+parentElements);
-            throw new Error("Le parentElement est requis pour créer un événement.");
+            throw new Error("Le parentElement est requis pour créer un événement." + parentElements);
         }
 
 

@@ -7,36 +7,6 @@ let retourneMois = ["janvier","fevrier","mars","avril","mai","juin","juillet","a
 
 
 
-function supprimerEvents(  ){
-    // Utiliser querySelectorAll pour obtenir une NodeList statique
-    let eventSlots = document.querySelectorAll(".event-slot");
-
-    // Itérer et supprimer chaque élément
-    eventSlots.forEach(element => {
-        console.log("element supprimé" + element);
-        element.remove(); // Supprimer l'élément
-    });
-}
-function afficheEvents() {
-    // Supprimer les événements existants avant d'afficher les nouveaux
-    supprimerEvents();
-    // Récupérer les événements de la semaine suivante depuis localStorage
-    let storedEvents = localStorage.getItem(cePlanning.viserLundi()); // Utiliser la date formatée pour récupérer les événements
-
-    // Vérifier si des événements existent pour cette semaine
-    if (storedEvents) {
-        let eventsArray = JSON.parse(storedEvents);  // Convertir la chaîne JSON en tableau d'événements
-        
-        // Pour chaque événement, créer un élément div et l'ajouter à l'interface
-        eventsArray.forEach(event => {
-            let div = new Evenement(event.startY, event.startX, event.parentId);
-            div.div.style.height = event.height + "px";
-        });
-    }
-}
-
-
-    
 
 function afficheCalendrier( date ) //Pour ajouter la date à coté de jeudi vendredi etc
 {   
@@ -64,16 +34,15 @@ function reculeSemaine()
 {
     lundiCourant.setDate( lundiCourant.getDate() - 7 ) ;
     afficheCalendrier( lundiCourant ) ;
-    cePlanning.changeWeek(cePlanning.viserLundi());
-    afficheEvents();
+    cePlanning.viserLundi();
+
 
 }
 function avanceSemaine()
 {
     lundiCourant.setDate( lundiCourant.getDate() + 7 ) ;
     afficheCalendrier( lundiCourant ) ;
-    cePlanning.changeWeek(cePlanning.viserLundi());
-    afficheEvents();
+    cePlanning.viserLundi();
 
 }
 
@@ -82,6 +51,6 @@ function avanceSemaine()
 window.onload = function(){
 
     afficheCalendrier( lundiCourant ) ;
-    afficheEvents(lundiCourant);
+
 
 }

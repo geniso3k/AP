@@ -1,4 +1,4 @@
-
+ouvrirBase().then(() => {
 let cePlanning = new Planning();
 let planningBody = document.querySelector(".planning-body");
 
@@ -53,8 +53,7 @@ planningBody.addEventListener("mousedown", function(down) {
         if (parseInt(divCrea.getHeight()) < 20) {
             divCrea.setHeight(20);
         }
-        cePlanning.tab = divCrea;
-        console.log(cePlanning.tab);
+        cePlanning.ajouter(divCrea);
 
         planningBody.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseFinish);
@@ -81,3 +80,4 @@ planningBody.addEventListener("mousedown", function(down) {
     document.addEventListener("mouseup", onMouseFinish);
     document.addEventListener("mouseleave", onMouseFinish);
 });
+})
