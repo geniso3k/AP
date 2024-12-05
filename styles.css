@@ -138,9 +138,7 @@ body {
     min-height: 20px;
 }
 
-.event-slot:hover {
-    background-color: #218838;
-}
+
 
 .resize-handle {
     cursor: pointer;
@@ -258,4 +256,82 @@ body {
 .event-slot {
     /* Ajuster la largeur des événements pour éviter le débordement */
     width: calc(100% - 4px); /* Ajustement supplémentaire si nécessaire */
+}
+
+/* ... votre code CSS existant ... */
+
+/* Style des créneaux horaires (événements) */
+.event-slot {
+    position: absolute;
+    background-color: rgba(0, 123, 255, 0.5);
+    border-radius: 4px;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    box-sizing: border-box;
+    min-height: 20px;
+    width: 100%; /* S'assurer que le créneau remplit la largeur de la colonne */
+}
+
+/* Handles pour le redimensionnement */
+.resize-handle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background-color: transparent;
+    cursor: ns-resize;
+}
+
+.top-handle {
+    top: -5px;
+}
+
+.bottom-handle {
+    bottom: -5px;
+}
+
+/* CSS pour le formulaire popup */
+.popup-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.popup-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-form label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.popup-form input[type="text"] {
+    padding: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.popup-form button {
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.popup-form button:hover {
+    background-color: #0056b3;
 }
