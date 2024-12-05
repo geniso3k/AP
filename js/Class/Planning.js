@@ -3,7 +3,14 @@ class Planning {
     constructor(){
         
         this.db = db;
-        this.viserLundi();
+        ouvrirBase().then(() => { 
+            
+            setTimeout( () => {
+            this.viserLundi()
+            }, 200);
+
+
+        });
             
     }
 
@@ -12,7 +19,7 @@ class Planning {
     viserLundi(){
         let lundi = document.getElementById("current-week").innerText;
         this.week = lundi;
-        this.charger;
+        this.charger();
         return lundi;
     }
 
@@ -44,7 +51,6 @@ class Planning {
 
     charger(){
 
-      
             // Utiliser querySelectorAll pour obtenir une NodeList statique
             let eventSlots = document.querySelectorAll(".event-slot");
         

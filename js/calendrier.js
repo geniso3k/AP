@@ -30,21 +30,23 @@ function afficheCalendrier( date ) //Pour ajouter la date à coté de jeudi vend
 
 }
 
-function reculeSemaine()
-{
-    lundiCourant.setDate( lundiCourant.getDate() - 7 ) ;
-    afficheCalendrier( lundiCourant ) ;
-    cePlanning.viserLundi();
+
+    function reculeSemaine()
+    {       
+        lundiCourant.setDate( lundiCourant.getDate() - 7 ) ;
+        afficheCalendrier( lundiCourant ) ;
+        cePlanning.viserLundi();
 
 
-}
-function avanceSemaine()
-{
-    lundiCourant.setDate( lundiCourant.getDate() + 7 ) ;
-    afficheCalendrier( lundiCourant ) ;
-    cePlanning.viserLundi();
+    }
+    function avanceSemaine()
+    {
+        lundiCourant.setDate( lundiCourant.getDate() + 7 ) ;
+        afficheCalendrier( lundiCourant ) ;
+        cePlanning.viserLundi();
 
-}
+    }
+
 
  
 

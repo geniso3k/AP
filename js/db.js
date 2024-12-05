@@ -10,7 +10,6 @@ function ouvrirBase() {
             db.createObjectStore("evenements", { keyPath: "id", autoIncrement: true });
             console.log("Table 'evenements' créée !");
         };
-
         request.onsuccess = function (event) {
             db = event.target.result;
             console.log("Base de données ouverte !");
