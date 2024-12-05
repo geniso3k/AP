@@ -56,7 +56,6 @@ class Planning {
         
             // Itérer et supprimer chaque élément
             eventSlots.forEach(element => {
-                console.log("element supprimé" + element);
                 element.remove(); // Supprimer l'élément
             });
             

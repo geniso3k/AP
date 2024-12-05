@@ -54,7 +54,6 @@ planningBody.addEventListener("mousedown", function(down) {
             divCrea.setHeight(20);
         }
         cePlanning.ajouter(divCrea);
-        console.log(cePlanning.tab);
 
         planningBody.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseFinish);

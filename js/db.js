@@ -42,9 +42,7 @@ function ajouterEventsBDD(semaine, div) {
     executerOperation("readwrite", function (store) {
         let request = store.add({ semaine: semaine, div: div });
 
-        request.onsuccess = function () {
-            console.log("Événement ajouté :", semaine, div);
-        };
+
 
         request.onerror = function (event) {
             console.error("Erreur lors de l'ajout :", event.target.error + "Données ; "+div);
@@ -59,7 +57,6 @@ function LireEventsBDD(callback) {
         let request = store.getAll();
 
         request.onsuccess = function () {
-            console.log("Tous les événements :", request.result);
             callback(request.result);
         };
 
