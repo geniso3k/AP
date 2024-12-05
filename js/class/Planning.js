@@ -2,248 +2,307 @@
 
 class Planning {
     constructor() {
-        this.creneaux = []; // Tableau pour stocker tous les créneaux
+        this.creneaux = [];
+        this.creationMode = 'form'; // 'form' ou 'graphical'
 
         this.initEventHandlers();
     }
 
     initEventHandlers() {
-        // Gérer le clic sur les colonnes de jour pour créer un nouveau créneau
         const dayColumns = document.querySelectorAll('.day-column');
 
         dayColumns.forEach((dayColumn) => {
-            dayColumn.addEventListener('click', (e) => {
-                // Éviter de déclencher l'événement lors du clic sur un créneau existant
-                if (e.target !== dayColumn) return;
+            if (this.creationMode === 'form') {
+                dayColumn.addEventListener('click', (e) => this.handleDayColumnClickForm(e));
+            } else if (this.creationMode === 'graphical') {
+                dayColumn.addEventListener('mousedown', (e) => this.handleDayColumnMouseDown(e));
+            }
+        });
 
-                // Calculer l'heure de début en fonction de la position du clic
-                const rect = dayColumn.getBoundingClientRect();
-                const y = e.clientY - rect.top;
-                const startTime = y / 50; // Supposant que chaque heure fait 50px
-                const duration = 1; // Durée initiale par défaut (1 heure)
+        // Gestion du bouton pour changer de mode
+        document.getElementById('toggle-mode').addEventListener('click', () => {
+            if (this.creationMode === 'form') {
+                this.creationMode = 'graphical';
+                document.getElementById('toggle-mode').textContent = 'Mode Formulaire';
+            } else {
+                this.creationMode = 'form';
+                document.getElementById('toggle-mode').textContent = 'Mode Graphique';
+            }
 
-                const dayColumnId = dayColumn.id;
-
-                // Créer un nouveau créneau
-                const creneau = new Creneau(dayColumnId, startTime, duration);
-
-                // Ajouter le créneau au tableau
-                this.creneaux.push(creneau);
-
-                // Afficher le formulaire popup pour saisir le motif
-                this.showMotifPopup(creneau);
-
-                // Initialiser les événements pour ce créneau
-                this.initCreneauEvents(creneau);
-            });
+            // Réinitialiser les écouteurs d'événements
+            this.initEventHandlers();
         });
     }
 
-    showMotifPopup(creneau) {
-        // Créer un formulaire popup pour saisir le motif
+    handleDayColumnClickForm(e) {
+        const dayColumn = e.currentTarget;
+
+        const rect = dayColumn.getBoundingClientRect();
+        const y = e.clientY - rect.top;
+        const hourHeight = 50;
+        const startTime = y / hourHeight;
+        const duration = 1;
+
+        this.showMotifPopup(startTime, startTime + duration);
+    }
+
+    handleDayColumnMouseDown(e) {
+        const dayColumn = e.currentTarget;
+        const rect = dayColumn.getBoundingClientRect();
+        const startY = e.clientY - rect.top;
+        const hourHeight = 50;
+        let isCreating = true;
+
+        const tempEvent = document.createElement('div');
+        tempEvent.classList.add('event-slot');
+        tempEvent.style.top = `${startY}px`;
+        tempEvent.style.height = '0px';
+        dayColumn.appendChild(tempEvent);
+
+        const onMouseMove = (e) => {
+            if (!isCreating) return;
+            const currentY = e.clientY - rect.top;
+            const height = currentY - startY;
+            tempEvent.style.height = `${height}px`;
+        };
+
+        const onMouseUp = (e) => {
+            isCreating = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+
+            const endY = e.clientY - rect.top;
+            const startTime = startY / hourHeight;
+            const endTime = endY / hourHeight;
+
+            // Ouvrir le formulaire popup avec les valeurs pré-remplies
+            this.showMotifPopup(startTime, endTime);
+
+            // Retirer l'élément temporaire
+            dayColumn.removeChild(tempEvent);
+        };
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+
+
+    showMotifPopup(startTime, duration, existingCreneau = null) {
+        // Créer une superposition pour le fond
+        const overlay = document.createElement('div');
+        overlay.classList.add('popup-overlay');
+        document.body.appendChild(overlay);
+
+        // Créer le formulaire popup
         const popup = document.createElement('div');
         popup.classList.add('popup-form');
 
         const form = document.createElement('form');
 
-        const label = document.createElement('label');
-        label.textContent = 'Entrez le motif:';
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.required = true;
+        // Champ pour le motif
+        const motifLabel = document.createElement('label');
+        motifLabel.textContent = 'Motif :';
+        const motifInput = document.createElement('input');
+        motifInput.type = 'text';
+        motifInput.required = true;
+        if (existingCreneau) {
+            motifInput.value = existingCreneau.motif;
+        }
+
+        // Champ pour la date de début
+        const dateLabel = document.createElement('label');
+        dateLabel.textContent = 'Date de début :';
+        const dateInput = document.createElement('input');
+        dateInput.type = 'date';
+        dateInput.required = true;
+
+        // Champ pour la date de fin
+        const endDateLabel = document.createElement('label');
+        endDateLabel.textContent = 'Date de fin :';
+        const endDateInput = document.createElement('input');
+        endDateInput.type = 'date';
+        endDateInput.required = true;
+
+        // Champ pour l'heure de début
+        const startTimeLabel = document.createElement('label');
+        startTimeLabel.textContent = 'Heure de début :';
+        const startTimeInput = document.createElement('input');
+        startTimeInput.type = 'time';
+        startTimeInput.required = true;
+
+        // Champ pour l'heure de fin
+        const endTimeLabel = document.createElement('label');
+        endTimeLabel.textContent = 'Heure de fin :';
+        const endTimeInput = document.createElement('input');
+        endTimeInput.type = 'time';
+        endTimeInput.required = true;
+
+        // Si on modifie un créneau existant, pré-remplir les champs
+        if (existingCreneau) {
+            const existingStartDate = existingCreneau.startDate;
+            const existingEndDate = existingCreneau.endDate;
+            dateInput.value = existingStartDate.toISOString().split('T')[0];
+            endDateInput.value = existingEndDate.toISOString().split('T')[0];
+            startTimeInput.value = this.formatTime(existingCreneau.startTime);
+            endTimeInput.value = this.formatTime(existingCreneau.startTime + existingCreneau.duration);
+        } else {
+            // Pré-remplir la date et l'heure en fonction de l'endroit cliqué
+            const today = new Date();
+            dateInput.value = today.toISOString().split('T')[0];
+            endDateInput.value = dateInput.value;
+            startTimeInput.value = this.formatTime(startTime);
+            endTimeInput.value = this.formatTime(startTime + duration);
+        }
 
         const submitButton = document.createElement('button');
         submitButton.type = 'submit';
         submitButton.textContent = 'OK';
 
-        form.appendChild(label);
-        form.appendChild(input);
-        form.appendChild(submitButton);
+        // Dans showMotifPopup
+
+form.appendChild(motifLabel);
+form.appendChild(motifInput);
+form.appendChild(dateLabel);
+form.appendChild(dateInput);
+form.appendChild(endDateLabel);
+form.appendChild(endDateInput);
+form.appendChild(startTimeLabel);
+form.appendChild(startTimeInput);
+form.appendChild(endTimeLabel);
+form.appendChild(endTimeInput);
+form.appendChild(submitButton);
+
+// ...
+
 
         popup.appendChild(form);
-        document.body.appendChild(popup);
+        document.body.appendChild(popup); // Ajouter le popup au body
 
-        // Centrer le popup
-        popup.style.top = `${window.innerHeight / 2 - popup.offsetHeight / 2}px`;
-        popup.style.left = `${window.innerWidth / 2 - popup.offsetWidth / 2}px`;
+        // Centrer le popup sur l'écran
+        popup.style.position = 'fixed';
+        popup.style.top = '50%';
+        popup.style.left = '50%';
+        popup.style.transform = 'translate(-50%, -50%)';
+        popup.style.zIndex = '1001'; // S'assurer qu'il est au-dessus de l'overlay
 
-        // Gérer la soumission du formulaire
+        // Gestion de la fermeture du popup
+        overlay.addEventListener('click', () => {
+            document.body.removeChild(popup);
+            document.body.removeChild(overlay);
+        });
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const motif = input.value.trim();
-            if (motif) {
-                // Enregistrer le motif dans le créneau
-                creneau.motif = motif;
+            const motif = motifInput.value.trim();
+            const dateValue = dateInput.value;
+            const endDateValue = endDateInput.value;
+            const startTimeValue = startTimeInput.value;
+            const endTimeValue = endTimeInput.value;
 
-                // Afficher le motif dans le créneau
-                creneau.eventSlot.textContent = motif;
+            if (motif && dateValue && endDateValue && startTimeValue && endTimeValue) {
+                // Convertir les heures en nombres décimaux
+                const startTime = this.convertTimeToDecimal(startTimeValue);
+                const endTime = this.convertTimeToDecimal(endTimeValue);
+                const duration = endTime - startTime;
 
-                // Supprimer le popup
+                if (duration <= 0) {
+                    alert('L\'heure de fin doit être après l\'heure de début.');
+                    return;
+                }
+
+                // Créer des objets Date pour les dates de début et de fin
+                const startDateParts = dateValue.split('-');
+                const startDate = new Date(startDateParts[0], startDateParts[1] - 1, startDateParts[2]);
+
+                const endDateParts = endDateValue.split('-');
+                const endDate = new Date(endDateParts[0], endDateParts[1] - 1, endDateParts[2]);
+
+                if (endDate < startDate) {
+                    alert('La date de fin doit être après la date de début.');
+                    return;
+                }
+
+                if (existingCreneau) {
+                    existingCreneau.motif = motif;
+                    existingCreneau.startDate = startDate;
+                    existingCreneau.endDate = endDate;
+                    existingCreneau.startTime = startTime;
+                    existingCreneau.duration = duration;
+                    existingCreneau.updatePosition();
+                    existingCreneau.updateContent();
+                    this.saveCreneau(existingCreneau);
+                } else {
+                    const creneau = new Creneau(startDate, endDate, startTime, duration, motif, this);
+
+                    // Vérifier les chevauchements
+                    const overlappingCreneaux = this.checkOverlap(creneau);
+                    if (overlappingCreneaux.length >= 2) {
+                        alert('Impossible de créer plus de deux créneaux au même moment.');
+                        return;
+                    }
+
+                    this.creneaux.push(creneau);
+                    this.saveCreneau(creneau);
+                }
                 document.body.removeChild(popup);
-
-                // Sauvegarder le créneau dans la base de données
-                this.saveCreneau(creneau);
+                document.body.removeChild(overlay);
+            } else {
+                alert('Veuillez remplir tous les champs.');
             }
         });
     }
 
-    initCreneauEvents(creneau) {
-        const eventSlot = creneau.eventSlot;
-
-        // Ajouter des handles pour le redimensionnement
-        const topHandle = document.createElement('div');
-        topHandle.classList.add('resize-handle', 'top-handle');
-        const bottomHandle = document.createElement('div');
-        bottomHandle.classList.add('resize-handle', 'bottom-handle');
-
-        eventSlot.appendChild(topHandle);
-        eventSlot.appendChild(bottomHandle);
-
-        // Ajouter les événements pour le redimensionnement
-        this.initResizeEvents(creneau, topHandle, 'top');
-        this.initResizeEvents(creneau, bottomHandle, 'bottom');
-
-        // Ajouter les événements pour le déplacement (glisser-déposer)
-        this.initDragEvents(creneau);
+    formatTime(timeDecimal) {
+        const hours = Math.floor(timeDecimal);
+        const minutes = Math.round((timeDecimal - hours) * 60);
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
-    initResizeEvents(creneau, handle, handleType) {
-        let isResizing = false;
-        let initialY = 0;
-        let initialHeight = 0;
-        let initialTop = 0;
-
-        const onMouseMove = (e) => {
-            if (!isResizing) return;
-            const deltaY = e.clientY - initialY;
-
-            if (handleType === 'bottom') {
-                const newHeight = initialHeight + deltaY;
-                if (newHeight > 20) { // Hauteur minimale
-                    creneau.duration = newHeight / 50; // Mettre à jour la durée
-                    creneau.updatePosition();
-                }
-            } else if (handleType === 'top') {
-                const newTop = initialTop + deltaY;
-                const newHeight = initialHeight - deltaY;
-                if (newHeight > 20 && newTop >= 0) {
-                    creneau.startTime = newTop / 50; // Mettre à jour l'heure de début
-                    creneau.duration = newHeight / 50;
-                    creneau.updatePosition();
-                }
-            }
-        };
-
-        const onMouseUp = () => {
-            isResizing = false;
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-
-            // Sauvegarder les modifications dans la base de données
-            this.saveCreneau(creneau);
-        };
-
-        const onMouseDown = (e) => {
-            e.stopPropagation();
-            isResizing = true;
-            initialY = e.clientY;
-            initialHeight = creneau.eventSlot.offsetHeight;
-            initialTop = creneau.eventSlot.offsetTop;
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-        };
-
-        handle.addEventListener('mousedown', onMouseDown);
+    convertTimeToDecimal(timeString) {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        return hours + minutes / 60;
     }
 
-    initDragEvents(creneau) {
-        const eventSlot = creneau.eventSlot;
+    checkOverlap(creneau) {
+        const overlappingCreneaux = this.creneaux.filter((other) => {
+            if (other === creneau) return false;
 
-        let isDragging = false;
-        let initialX = 0;
-        let initialY = 0;
-        let initialTop = 0;
+            // Vérifier si les dates se chevauchent
+            if (creneau.endDate < other.startDate || creneau.startDate > other.endDate) return false;
 
-        const onMouseMove = (e) => {
-            if (!isDragging) return;
-            const deltaX = e.clientX - initialX;
-            const deltaY = e.clientY - initialY;
+            // Vérifier si les heures se chevauchent
+            const creneauStart = creneau.startTime;
+            const creneauEnd = creneau.startTime + creneau.duration;
+            const otherStart = other.startTime;
+            const otherEnd = other.startTime + other.duration;
 
-            const newTop = initialTop + deltaY;
+            return (creneauStart < otherEnd) && (creneauEnd > otherStart);
+        });
 
-            // Mettre à jour la position verticale
-            eventSlot.style.top = `${newTop}px`;
-
-            // Vérifier si le créneau a été déplacé vers une autre colonne de jour
-            const dayColumns = document.querySelectorAll('.day-column');
-            dayColumns.forEach((dayColumn) => {
-                const rect = dayColumn.getBoundingClientRect();
-                if (e.clientX >= rect.left && e.clientX <= rect.right) {
-                    if (creneau.dayColumnId !== dayColumn.id) {
-                        // Retirer de l'ancienne colonne
-                        const oldDayColumn = document.getElementById(creneau.dayColumnId);
-                        oldDayColumn.removeChild(eventSlot);
-
-                        // Ajouter à la nouvelle colonne
-                        dayColumn.appendChild(eventSlot);
-
-                        // Mettre à jour l'ID de la colonne du jour du créneau
-                        creneau.dayColumnId = dayColumn.id;
-                    }
-                }
-            });
-
-            // Mettre à jour l'heure de début en fonction de la nouvelle position
-            creneau.startTime = newTop / 50;
-        };
-
-        const onMouseUp = () => {
-            isDragging = false;
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-
-            // Sauvegarder les modifications dans la base de données
-            this.saveCreneau(creneau);
-        };
-
-        const onMouseDown = (e) => {
-            // Éviter de commencer le déplacement lors du clic sur les handles de redimensionnement
-            if (e.target.classList.contains('resize-handle')) return;
-
-            e.preventDefault();
-            isDragging = true;
-            initialX = e.clientX;
-            initialY = e.clientY;
-            initialTop = eventSlot.offsetTop;
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-        };
-
-        eventSlot.addEventListener('mousedown', onMouseDown);
+        return overlappingCreneaux;
     }
 
     saveCreneau(creneau) {
-        // Sauvegarder le créneau dans la base de données
         db.saveCreneau(creneau);
     }
 
     loadCreneaux() {
-        // Charger les créneaux depuis la base de données
         db.getCreneaux().then((creneauxData) => {
             creneauxData.forEach((data) => {
-                const creneau = new Creneau(data.dayColumnId, data.startTime, data.duration);
+                const creneau = new Creneau(
+                    new Date(data.startDate),
+                    new Date(data.endDate),
+                    data.startTime,
+                    data.duration,
+                    data.motif,
+                    this
+                );
                 creneau.id = data.id;
-                creneau.motif = data.motif;
-                creneau.eventSlot.textContent = data.motif;
-
                 this.creneaux.push(creneau);
-                this.initCreneauEvents(creneau);
             });
         });
     }
 }
 
-// Attacher la classe Planning à l'objet global window
 window.Planning = Planning;

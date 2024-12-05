@@ -59,10 +59,9 @@ body {
     display: grid;
     grid-template-columns: minmax(50px, 80px) repeat(7, 1fr);
 }
-.planning-body{
 
-    height: 20px;
-
+.planning-body {
+    height: 800px;
 }
 
 .planning-header {
@@ -122,7 +121,6 @@ body {
 /* Corps du planning */
 .planning-body-container {
     overflow-y: auto;
-    
 }
 
 /* Style des créneaux horaires (événements) */
@@ -136,41 +134,34 @@ body {
     cursor: pointer;
     box-sizing: border-box;
     min-height: 20px;
+    width: 100%; /* S'assurer que le créneau remplit la largeur de la colonne */
 }
 
-
-
+/* Handles pour le redimensionnement */
 .resize-handle {
-    cursor: pointer;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background-color: transparent;
+    cursor: ns-resize;
 }
 
 .top-handle {
-    cursor: n-resize;
-    background-color:black;
-    position:absolute;
-    width: 10px !important;
-    left: 45%;
-    border-radius: 50%;
-    top: -5px !important;
+    top: -5px;
 }
 
 .bottom-handle {
-    cursor: s-resize;
-    background-color:black;
-    position:absolute;
-    width: 10px !important;
-    left: 45%;
-    border-radius: 50%;
-    bottom: -5px !important;
+    bottom: -5px;
 }
 
 /* Animations pour les boutons handle */
 @keyframes appearAnimation {
     0% { transform: scale(0); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
-  }
-  
-  .event-slot .top-handle, .event-slot .bottom-handle {
+}
+
+.event-slot .top-handle, .event-slot .bottom-handle {
     position: absolute;
     width: 20px !important;
     left: 45%;
@@ -179,23 +170,24 @@ body {
     opacity: 0;
     transform: scale(0);
     transition: transform 0.2s ease-out, opacity 0.5s ease-out;
-  }
-  
-  .event-slot:hover .top-handle, .event-slot:hover .bottom-handle {
+}
+
+.event-slot:hover .top-handle, .event-slot:hover .bottom-handle {
     transform: scale(1);
     opacity: 1;
-  }
-  
-  .event-slot .top-handle {
+}
+
+.event-slot .top-handle {
     cursor: n-resize;
     top: -5px !important;
-  }
-  
-  .event-slot .bottom-handle {
+}
+
+.event-slot .bottom-handle {
     cursor: s-resize;
     bottom: -5px !important;
-  }
-/* fin animation */  
+}
+
+/* fin animation */
 
 .top-text, .sousDiv {
     padding: 2px;
@@ -246,52 +238,10 @@ body {
 }
 
 /* Styles supplémentaires pour l'alignement et la responsivité */
-
-
 .day-column {
     /* S'assurer que les colonnes des jours remplissent toute la hauteur disponible */
     display: grid;
 }
-
-.event-slot {
-    /* Ajuster la largeur des événements pour éviter le débordement */
-    width: calc(100% - 4px); /* Ajustement supplémentaire si nécessaire */
-}
-
-/* ... votre code CSS existant ... */
-
-/* Style des créneaux horaires (événements) */
-.event-slot {
-    position: absolute;
-    background-color: rgba(0, 123, 255, 0.5);
-    border-radius: 4px;
-    color: #fff;
-    padding: 5px;
-    font-size: 12px;
-    cursor: pointer;
-    box-sizing: border-box;
-    min-height: 20px;
-    width: 100%; /* S'assurer que le créneau remplit la largeur de la colonne */
-}
-
-/* Handles pour le redimensionnement */
-.resize-handle {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 10px;
-    background-color: transparent;
-    cursor: ns-resize;
-}
-
-.top-handle {
-    top: -5px;
-}
-
-.bottom-handle {
-    bottom: -5px;
-}
-
 /* CSS pour le formulaire popup */
 .popup-form {
     position: fixed;
@@ -302,8 +252,8 @@ body {
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
+    z-index: 1001; /* S'assurer qu'il est au-dessus de l'overlay */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
 }
 
 .popup-form form {
@@ -335,3 +285,24 @@ body {
 .popup-form button:hover {
     background-color: #0056b3;
 }
+
+/* Overlay pour le fond */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    z-index: 1000; /* Derrière le popup */
+}
+/* ... votre code CSS existant ... */
+
+/* Ajoutez le style pour afficher la date dans le créneau */
+.event-slot .event-date {
+    font-size: 10px;
+    margin-top: 5px;
+    color: #fff;
+}
+
+/* ... le reste de votre code CSS ... */
